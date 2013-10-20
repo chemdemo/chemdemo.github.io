@@ -1,1 +1,1 @@
-# This is my personal static site on github.
+This is my personal static site on github.
