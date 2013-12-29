@@ -5,7 +5,6 @@
 <title>dmyang</title>
 <style type="text/css">
 body {
-	background-color: #FAFAFA;
 	font: 14px/1.8 Tahoma;
 }
 a {
@@ -15,10 +14,42 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+.wrapper {
+    width: 80%;
+    height: 100%;
+    margin: 0 auto;
+}
+section {
+    margin-top: 3em;
+}
+dt {
+    font-size: 2em;
+}
+dd {
+    line-height: 2em;
+}
 </style>
 </head>
 <body>
-	<p>Visite <a href="http://www.dmfeel.com">my blog</a>.</p>
+    <div class="wrapper">
+        <section class="about">
+            <dl>
+                <dt>About me</dt>
+                <dd>github: <a href="https://github.com/chemdemo">https://github.com/chemdemo</a></dd>
+                <dd>blog: <a href="http://www.dmfeel.com">http://www.dmfeel.com</a></dd>
+                <dd>twitter: <a href="http://weibo.com/chemdemo">http://weibo.com/chemdemo</a></dd>
+            </dl>
+        </section>
+
+        <section class="blogs">
+            <dl>
+                <dt>Articles</dt>
+                <dd>
+                    <a href="./blogs/exports.md">About `exports.module` and `export` in node.js</a>
+                </dd>
+            </dl>
+        </section>
+    </div>
 </body>
 <script></script>
 </html>
