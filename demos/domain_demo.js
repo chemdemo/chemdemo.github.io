@@ -5,6 +5,7 @@ var http = require('http');
 var fs = require('fs');
 
 // see: http://www.slideshare.net/domenicdenicola/domains-20010482
+// mocha has bug when working with node v0.8
 
 /*describe('active domain not created case', function() {
     it('should has no active domain if `domain.create()` not called', function() {
@@ -32,32 +33,40 @@ var fs = require('fs');
     });
 });*/
 
-// describe('#bind()', function() {
-    var d = domain.create();
+describe('#bind()', function() {
+    it('should throw error', function(done) {
+        var d = domain.create();
 
-    d.on('error', function(err) {
-        console.log(d.domain, err.message);
-    });
+        d.on('error', function(err) {
+            err.message.should.equal('ENOENT, open \'non_existent.js\'');
+            console.log(err.domain);
+            console.log('message:', err.message);
+            done();
+        });
 
-    var bind = d.bind(function() {
         process.nextTick(function() {
-            fs.readFile('non_existent.js', function(err, str) {
+            fs.readFile('non_existent.js', 'utf8', d.bind(function(err, str) {
                 if(err) throw err;
-                console.log(str.toString());
-            });
+                console.log('file text:', str.toString());
+            }));
         });
     });
+});
 
-    var intercept = d.intercept(function() {
+describe('#intercept()', function() {
+    it('should throw err', function(done) {
+        var d = domain.create();
+
+        d.on('error', function(err) {
+            err.message.should.equal('ENOENT, open \'non_existent2.js\'');
+            console.log('message:', err.message);
+            done();
+        });
+
         process.nextTick(function() {
-            fs.readFile('non_existent.js', function(err, str) {
-                if(err) throw err;
-                console.log(str.toString());
-            });
+            fs.readFile('non_existent2.js', d.intercept(function(str) {
+                console.log('file2 text:', str.toString());
+            }));
         });
     });
-
-    bind();
-
-    // intercept();
-// });
+});
