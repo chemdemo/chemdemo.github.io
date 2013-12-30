@@ -9,7 +9,7 @@ var events = require('events');
 // mocha has bug when working with node v0.8
 
 // ===
-// domain was not exists by default
+// // domain was not exists by default
 // should.not.exist(process.domain);
 
 // var d = domain.create();
@@ -105,7 +105,7 @@ var events = require('events');
 //         });
 //     });
 // } catch(e) {
-//     console.error('Error caught by catch block:', err);
+//     console.error('Error caught by catch block:', e);
 // }
 
 // ===
@@ -178,24 +178,24 @@ var events = require('events');
 
 // ===
 // can not catch exceptions objects created before domain created
-var d = domain.create();
-var e = new events.EventEmitter();
+// var d = domain.create();
+// var e = new events.EventEmitter();
 
-d.on('error', function(err) {
-    console.error('Error caught by domain:', err);
-});
+// d.on('error', function(err) {
+//     console.error('Error caught by domain:', err);
+// });
 
-// d.add(e);
+// // d.add(e);
 
-d.run(function() {
-    e.once('data', function(err) {
-        throw err;
-    });
-});
+// d.run(function() {
+//     e.once('data', function(err) {
+//         throw err;
+//     });
+// });
 
-// will check active domain
-// https://github.com/joyent/node/blob/v0.10.4/lib/events.js#L85
-e.emit('data', new Error('Handle data error!'));
+// // will check active domain
+// // https://github.com/joyent/node/blob/v0.10.4/lib/events.js#L85
+// e.emit('data', new Error('Handle data error!'));
 
 // ===
 // always emit after bound
