@@ -142,9 +142,9 @@ d.run(function() {
 
 #### domain的显式绑定
 
-上面没哟提到的两个API是`add()`和`remove()`，add作用是把domain创建之前创建的对象添加到这个domain里边，然后这个对象即可使用domain捕捉异常了，remove则相反。domain对象上有个numbers队列专门用于管理add后的对象。
+上面没有提到的两个API是`add()`和`remove()`，add作用是把domain创建之前创建的（EventEmitter实例）对象添加到这个domain里边，然后这个对象即可使用domain捕捉异常了，remove则相反。domain对象上有个numbers队列专门用于管理add后的对象。
 
-这里可参考官方示例。
+这里可参考[官方示例](http://nodejs.org/api/domain.html#domain_explicit_binding)。
 
 #### domain如何抛出异常
 
@@ -254,7 +254,7 @@ this.read = function(file) {
 };
 ```
 
-在书写Node.js代码的时候，对于事件分发器，应该养成先绑定（`on()`或`addEventListener()`）后触发（`emit()`）的习惯。在执行事件回调的时候，****对于有可能抛异常的情况，应该把emit放到domain里去****：
+在书写Node.js代码的时候，对于事件分发器，应该养成先绑定（`on()`或`addEventListener()`）后触发（`emit()`）的习惯。在执行事件回调的时候，**对于有可能抛异常的情况，应该把emit放到domain里去**：
 
 ``` javascript
 var d = domain.create();
@@ -301,7 +301,7 @@ if (this.domain && this !== process) this.domain.enter();
 
 关于使用domain到集群环境，推荐都看看官方的说明：[Warning: Don't Ignore Errors!](http://nodejs.org/docs/latest/api/domain.html#domain_warning_don_t_ignore_errors)。把每一个网络请求都包在一个domain里边，捕获到异常时，不要立即退出进程，应该保证进程中其他连接正常退出之后再exit，官方推荐的是设一个定时器，过3min后退出进程，接下去做善后处理，然后应该返回应该有的错误（如500）给客户端。
 
-对于connect或者express创建的web服务，有一个`[domain-middleware](https://github.com/fengmk2/domain-middleware)`中间件可以直接用，它会把next包装到一个已经定制好的domain里边。
+对于connect或者express创建的web服务，有一个[domain-middleware](https://github.com/fengmk2/domain-middleware)中间件可以直接用，它会把next包装到一个已经定制好的domain里边。
 
 在具体应用场景，应该uncaughtException事件配合domain来用。
 
