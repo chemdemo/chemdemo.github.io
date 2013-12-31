@@ -1,6 +1,6 @@
-# 网络通讯协议知识汇聚
+## 网络通讯协议知识汇聚
 
-### OSI网络七层协议
+#### OSI网络七层协议
 
 - 物理层
 - 数据链路层
@@ -13,7 +13,7 @@
 ![OSI网络七层协议](http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Rm-osi_parallel-zh.png/438px-Rm-osi_parallel-zh.png)  
 *图片来自[维基百科](http://zh.wikipedia.org/wiki/OSI%E6%A8%A1%E5%9E%8B)*
 
-### TCP/IP协议
+#### TCP/IP协议
 
 **（4层）网络模型**参考[维基百科](http://zh.wikipedia.org/wiki/TCP/IP%E5%8D%8F%E8%AE%AE)
 
