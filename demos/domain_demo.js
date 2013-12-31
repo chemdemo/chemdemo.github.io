@@ -8,7 +8,7 @@ var events = require('events');
 // see: http://www.slideshare.net/domenicdenicola/domains-20010482
 // mocha has bug when working with node v0.8
 
-// ===
+// ========================================================
 // // domain was not exists by default
 // should.not.exist(process.domain);
 
@@ -27,7 +27,8 @@ var events = require('events');
 
 // should.not.exist(process.domain);
 
-// ===
+
+// ========================================================
 // what domain effects
 // timer(setTimeout, setInterval, setImmediate, process.nextTick)、EventEmitter
 // process.on('uncaughtException', function(err) {
@@ -90,7 +91,8 @@ var events = require('events');
 // });
 // e2.emit('file');
 
-// ===
+
+// ========================================================
 // try/catch can not catch exceptions from asynchronous function
 // process will exit when uncaughtException error caught!!!
 // process.on('uncaughtException', function(err) {
@@ -108,7 +110,8 @@ var events = require('events');
 //     console.error('Error caught by catch block:', e);
 // }
 
-// ===
+
+// ========================================================
 // use domain to catch exceptions from asynchronous function
 // var d = domain.create();
 
@@ -121,6 +124,7 @@ var events = require('events');
 // });
 
 // d.run(function() {
+//     process.domain = null;
 //     process.nextTick(function() {
 //         fs.readFile('non_existent.js', function(err, str) {
 //             if(err) throw err;
@@ -129,7 +133,8 @@ var events = require('events');
 //     });
 // });
 
-// ===
+
+// ========================================================
 // use `bind()` case
 // var d = domain.create();
 
@@ -144,7 +149,8 @@ var events = require('events');
 //     }));
 // }).listen(8888);
 
-// ===
+
+// ========================================================
 // use `intercept()` case
 // var d = domain.create();
 
@@ -158,7 +164,8 @@ var events = require('events');
 //     }));
 // }).listen(8888);
 
-// ===
+
+// ========================================================
 // return the error message to response
 // http.createServer(function(req, res) {
 //     var d = domain.create();
@@ -176,7 +183,89 @@ var events = require('events');
 //     });
 // }).listen(8888);
 
-// ===
+
+// ========================================================
+// can not catch exceptions on EventEmitter elements
+// var d = domain.create();
+// var msg;
+// var Msg = function() {
+//     events.EventEmitter.call(this);
+
+//     this.on('msg', function(msg) {
+//         console.log(msg);
+//     });
+
+//     this.send = function(msg) {
+//         this.emit('msg', msg);
+//     };
+
+//     this.read = function(file) {
+//         var root = this;
+//         fs.readFile(file, function(err, buf) {
+//             // process.domain = d;
+//             if(err) throw err;
+//             else root.send(buf.toString());
+//         });
+//     };
+// };
+
+// require('util').inherits(Msg, events.EventEmitter);
+
+// d.on('error', function(err) {
+//     console.error('Error caught by domain:', err);
+// });
+
+// d.run(function() {
+//     msg = new Msg();
+// });
+
+// // d.run(function() {
+//     msg.read('non_existent.js');
+// // });
+
+
+// ========================================================
+// can not catch exceptions on EventEmitter elements
+// var d = domain.create();
+// var msg;
+// var Msg = function() {
+//     events.EventEmitter.call(this);
+
+//     this.on('msg', function(msg) {
+//         console.log(msg);
+//     });
+
+//     this.on('error', function(err) {
+//         throw err;
+//     });
+
+//     this.send = function(msg) {
+//         this.emit('msg', msg);
+//     };
+
+//     this.read = function(file) {
+//         var root = this;
+//         fs.readFile(file, function(err, buf) {
+//             if(err) root.emit('error', err);
+//             else root.send(buf.toString());
+//         });
+//     };
+// };
+
+// require('util').inherits(Msg, events.EventEmitter);
+
+// d.on('error', function(err) {
+//     console.error('Error caught by domain:', err);
+// });
+
+// d.run(function() {
+//     msg = new Msg();
+// });
+
+// msg.read('non_existent.js');
+
+
+// ========================================================
 // can not catch exceptions objects created before domain created
 // var d = domain.create();
 // var e = new events.EventEmitter();
@@ -197,19 +286,25 @@ var events = require('events');
 // // https://github.com/joyent/node/blob/v0.10.4/lib/events.js#L85
 // e.emit('data', new Error('Handle data error!'));
 
-// ===
+
+// ========================================================
 // always emit after bound
-// var d = domain.create();
-// var e = new events.EventEmitter();
+// Emitting events in domain runtime
+var d = domain.create();
+var e = new events.EventEmitter();
 
-// d.on('error', function(err) {
-//     console.error('Error caught by domain:', err);
-// });
+d.on('error', function(err) {
+    console.error('Error caught by domain:', err);
+});
 
-// e.on('data', function(err) {
-//     if(err) throw err;
-// });
+e.on('data', function(err) {
+    if(err) throw err;
+});
 
-// d.run(function() {
-//     e.emit('data', new Error('Handle data error!'));
-// });
+if(Math.random() > 0.5) {
+    d.run(function() {
+        e.emit('data', new Error('Error in domain runtime.'));
+    });
+} else {
+    e.emit('data', new Error('Error without domain.'));
+}
