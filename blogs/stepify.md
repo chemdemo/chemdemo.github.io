@@ -18,7 +18,7 @@ stepify中的每一个异步任务执行的时机是前一个异步操作执行�
 $ npm install stepify
 ```
 
-# 使用
+### 使用
 
 假设有一个工作（work）需要完成，它分解为task1、task2、task3。。。几个任务，每个任务分为好几个步骤（step），使用stepify实现的伪代码如下：
 
