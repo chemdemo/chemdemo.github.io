@@ -97,7 +97,7 @@ var workflow = Stepify()
 
 是不是很神奇？s并不是stepify内置的方法而是动态扩展出来的！
 
-那接下来又有个问题，t1和t2都有执行两个`step('s')`，那额外的参数怎么传递呢？奥妙之处在于step函数，它后面还可以跟其他参数，表示在我们定义所有task之前就已经知道的变量（我叫它⎡静态参数⎦），还有任务执行过程中，如果上一个step的输出怎么传递给下一个step呢？答案是[next]https://github.com/chemdemo/node-stepify#next或者[done]https://github.com/chemdemo/node-stepify#done，具体可以参考api，`s(fn)`只是定义一个函数体，通过静态参数和动态参数结合，可以实现不同的操作。
+那接下来又有个问题，t1和t2都有执行两个`step('s')`，那额外的参数怎么传递呢？奥妙之处在于step函数，它后面还可以跟其他参数，表示在我们定义所有task之前就已经知道的变量（我叫它⎡静态参数⎦），还有任务执行过程中，如果上一个step的输出怎么传递给下一个step呢？答案是[next](https://github.com/chemdemo/node-stepify#next)或者[done](https://github.com/chemdemo/node-stepify#done)，具体可以参考api，`s(fn)`只是定义一个函数体，通过静态参数和动态参数结合，可以实现不同的操作。
 
 这还没完，我们都听过一句话，叫做“条条大路通罗马（All roads lead to Rome）”，解决问题的方式往往有多种。上面这个例子，假如外部条件变了，task1和task2它们的执行互不影响，task3的执行需要依赖task1和task2的结果，即task1和task2可以并行，这样子怎么实现呢？
 
@@ -113,4 +113,4 @@ run(['t1', 't2'], 't3');
 
 可以看到，一个复杂的工作流，通过stepify定制，每一步都是那么清晰可读！
 
-欢迎选用，如果遇到bug请[告诉我](https://github.com/chemdemo/node-stepify/issues)，也欢迎提交pull request。
+欢迎选用，如果遇到bug请提交到[这里](https://github.com/chemdemo/node-stepify/issues)，也欢迎pull request。
