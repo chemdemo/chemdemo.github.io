@@ -89,6 +89,7 @@ var workflow = Stepify()
     .step('t3s1', fn)
     .step('t3s2', fn)
     .pend()
+    // 把s这一步的具体操作提出来
     .s(fn)
     .error(fn)
     .result(fn)
