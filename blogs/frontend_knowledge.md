@@ -38,7 +38,7 @@
     ```javascript
     var x = NaN;
     typeof x; // "number"
-        ```
+    ```
 
     * `object`
     ```javascript
