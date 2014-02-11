@@ -536,6 +536,80 @@ var $P = Jx().UI.Pager.create();// 同样可以先缓存结果
 
 * 复杂的计算考虑使用`Web Worker`
 
+#### jQuery性能优化
+
+###### 合理使用选择器
+
+* id和标签选择器最快，因为是直接调用原生API
+``` javascript
+$('#box'); // document.getElementById | document.querySelector
+$('div'); // document.getElementsByTagName
+```
+
+* 类选择器在低版本浏览器较慢，伪元素、属性选择器在不支持`querySelector`的浏览器很慢
+
+* 尽可能优先使用符合CSS语法规范的CSS选择器表达式，以此来避免使用jQuery自定义的选择器表达式，因为当jQuery遇到单个id, 标签名，类名，选择器就会快速调用浏览器支持的DOM方法查询
+
+* 优先选择`$.fn.find`查找子元素，因为`find`之前的选择器并没有使用 jQuery 自带的 Sizzle 选择器引擎，而是使用原生API查找元素
+``` javascript
+$('#parent').find('.child'); // 最快
+$('.child', $('#parent')); // 较快，内部会转换成第一条语句的形式，性能有一定损耗
+$('#parent .child'); // 不如上一个语句块
+```
+
+* 使用组合选择器时，尽可能让右端更明确，因为Sizzle引擎是从右到左进行匹配的
+``` javascript
+$('div.foo .bar'); // slow
+$('.foo div.bar'); // faster
+```
+
+* 避免过度具体，简洁的 DOM 结构也有助于提升选择器的性能
+``` javascript
+$('.foo .bar .baz');
+$('.foo div.baz'); // better
+```
+
+* 尽量避免使用通配符选择器
+
+###### 尽可能的少创建jQuery对象
+
+* 如`document.getElementById('el')`比`$('#el')`块
+
+* 如获取元素id：
+``` javascript
+$('div').click(function(e) {
+    // 生成了个jQuery对象
+    var id = $(this).attr('id');
+    // 这样更直接
+    var id = this.id;
+});
+```
+
+* 使用链式调用缓存jQuery对象
+``` xml
+<div id="user" class="none">
+    <p class="name"></p>
+    <p class="city"></p>
+</div>
+```
+``` javascript
+$('#user')
+    .find('.name').html('zhangsan').end()
+    .find('.city').html('shenzhen').end()
+    .removeClass('none');
+```
+
+* 做好jQuery对象缓存
+``` javascript
+var box = $('.box');
+box.find('> .cls1');
+box.find('> .cls2');
+```
+
+http://www.libuchao.com/2012/03/12/jquery-performance-best-practices/
+http://www.ruanyifeng.com/blog/2011/08/jquery_best_practices.html
+http://www.aliued.cn/2013/02/28/jquery%E9%80%89%E6%8B%A9%E5%99%A8%E6%8E%A2%E8%AE%A8%E8%BF%9B%E9%98%B6.html
+
 #### 整体优化
 
 * 雅虎34条：合并压缩文件和图片、gzip/deflate、CDN、HTTP头设置Cache-Control/Expires和Last-Modified/ETag、并行下载与DNS查询的平衡等
