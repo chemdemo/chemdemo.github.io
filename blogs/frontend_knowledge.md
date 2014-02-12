@@ -13,7 +13,7 @@
     * `Undefined`, `Null`, `Bollean`, `Number`, `String`
 
     * `Object`、`Array`
-    
+
     * `Date`、`RegExp`
 
 * typeof输出（以下六个值之一）：
@@ -60,7 +60,10 @@
 
 ###### 类型转换：
 
-* 简单类型 -> 简单类型：`'1'-0; // 0, equal to Number(1)`
+* 简单类型 -> 简单类型：
+``` javascript
+'1'-0; // 0, equal to Number(1)
+```
 
 * 简单类型 -> 对象（使用基本函数的构造函数：Number(), String(), Boolean()等生成）：
 ``` javascript
@@ -70,11 +73,20 @@ console.log(n.toString(2)); // 快速进制转换
 
 * 对象 -> 简单类型（参考[JavaScript 类型转换](http://www.ituring.com.cn/article/53351)）
 
-    1. 隐式转换：除Date外，统统是先 `valueOf`、再 `toString`（`Date` 在 `+` 和 `==` 时优先转化为字串）：`[] + 1; // 1`
+    1. 隐式转换：除Date外，统统是先 `valueOf`、再 `toString`（`Date` 在 `+` 和 `==` 时优先转化为字串）：
+    ``` javascript
+    [] + 1; // 1
+    ```
 
-    2. 显式Number(对象)：先`valueOf`，再`toString()`，都不存在则返回`NaN` ：`Number({}); // NaN`
+    2. 显式Number(对象)：先`valueOf`，再`toString()`，都不存在则返回`NaN`：
+    ``` javascript
+    Number({}); // NaN
+    ```
 
-    3. 显式String(对象)：先取`valueOf()`，再取`valueOf()`，都不存在则抛异常：`String({}); // "[object Object]"`
+    3. 显式String(对象)：先取`valueOf()`，再取`valueOf()`，都不存在则抛异常：
+    ``` javascript
+    String({}); // [object Object]
+    ```
 
 ###### DOM操作（增、删、查、改、移、数据交换）
 
