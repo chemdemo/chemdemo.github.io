@@ -50,6 +50,7 @@
             width: 100%;
             padding: 10px 10px 5px;
             border-bottom: 1px solid #DDD;
+            background-color: #DDD;
             display: none;
         }
 
@@ -284,6 +285,8 @@ $(document).ready(function() {
                 $ipt.val($ipt.val() + target.innerHTML).focus();
                 cls.add('active');
             }
+
+            return;
         }
     });
 
