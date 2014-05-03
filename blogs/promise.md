@@ -1,5 +1,7 @@
 # JavaScript Promise启示录
 
+这篇文章，主要普及promise的用法，高手自觉绕道哈～
+
 一直以来，JavaScript处理异步都是以callback的方式，在前端开发领域callback机制几乎深入人心。在设计API的时候，不管是浏览器厂商还是SDK开发商亦或是各种类库的作者，基本上都已经遵循着callback的套路。
 
 近几年随着JavaScript开发模式的逐渐成熟，CommonJS规范顺势而生，其中就包括提出了Promise规范，Promise完全改变了js异步编程的写法，让异步编程变得十分的易于理解。
@@ -63,7 +65,7 @@ runA();
 
 - promise必须实现`then`方法（可以说，then就是promise的核心），而且then必须返回一个promise，同一个promise的then可以调用多次，并且回调的执行顺序跟它们被定义时的顺序一致
 
-- then方法接受两个参数，第一个参数是成功时的回调，在promise由“等待”态转换到“完成”态时调用，另一个是失败时的回调，在promise由“等待”态转换到“拒接”态时调用。同时，then可以接受另一个promise传入，也接受一个“类then”的对象或方法，即thenable对象。
+- then方法接受两个参数，第一个参数是成功时的回调，在promise由“等待”态转换到“完成”态时调用，另一个是失败时的回调，在promise由“等待”态转换到“拒绝”态时调用。同时，then可以接受另一个promise传入，也接受一个“类then”的对象或方法，即thenable对象。
 
 注：对then的各种参数的处理是最复杂的部分，有兴趣的同学可以参看其他类Promise库的实现。
 
@@ -216,9 +218,9 @@ function run() {
 $('#run').on('click', run);
 ```
 
-这里的sleep只是为了看效果加的，可猛击查看[demo](http://chemdemo.github.io/demos/promise/browser.html)！
+这里的sleep只是为了看效果加的，可猛击查看[demo](http://chemdemo.github.io/demos/promise/browser.html)！当然，Node.js的例子可查看[这里](https://github.com/chemdemo/promiseA/blob/master/test/nodejs.js)。
 
-在这里，有一行`Promise.resolve(v)`静态方法只是简单返回一个以v为肯定结果的promise，v可不传入，也可以是一个函数或者是一个包含`then`方法的对象或函数（即thenable）。
+在这里，`Promise.resolve(v)`静态方法只是简单返回一个以v为肯定结果的promise，v可不传入，也可以是一个函数或者是一个包含`then`方法的对象或函数（即thenable）。
 
 类似的静态方法还有`Promise.cast(promise)`，生成一个以promise为肯定结果的promise；
 
@@ -230,7 +232,52 @@ $('#run').on('click', run);
 
 ### 第三方库的Promise
 
-Promises是如此的优雅！！
+现今流行的各大js库，几乎都不同程度的实现了Promise，如dojo，jQuery、Zepto、when.js、Q等，只是暴露出来的大都是`Deferred`对象，以jQuery（Zepto类似）为例，实现上面的`getImg()`：
+
+``` javascript
+function getImg(url) {
+    var def = $.Deferred();
+    var img = new Image();
+
+    img.onload = function() {
+        def.resolve(this);
+    };
+
+    img.onerror = function(err) {
+        def.reject(err);
+    };
+
+    img.src = url;
+
+    return def.promise();
+};
+```
+
+当然，jQuery中，很多的操作都返回的是Deferred或promise，如`animate`、`ajax`：
+
+``` javascript
+// animate
+$('.box').animate({'opacity': 0}, 1000).promise().then(function() {
+    console.log('done');
+});
+
+// ajax
+$.ajax(options).done(success).fail(fail);
+```
+
+jQuery还实现了`done()`和`fail()`方法，其实都是then方法的shortcut。
+
+至于处理promises队列，jQuery实现的是`$.when()`方法，用法和`Promise.all()`类似。
+
+其他类库，这里值得一提的是`when.js`，本身代码不多，完整实现Promise，同时支持browser和Node.js，而且提供更加丰富的API，是个不错的选择。这里限于篇幅，不再展开。
+
+### 尾声
+
+我们看到，不管Promise实现怎么复杂，但是它的用法却很简单，组织的代码很清晰，从此不用再受callback的折磨了。
+
+最后，Promises是如此的优雅！但也只是解决了回调的深层嵌套的问题，真正简化JavaScript异步编程的还是Generator，在Node.js端，建议考虑Generator。
+
+下一篇，就研究下Generator。
 
 ### 参考文献
 - [JavaScript Promises](http://www.html5rocks.com/en/tutorials/es6/promises/)
