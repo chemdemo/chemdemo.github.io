@@ -277,7 +277,7 @@ jQuery还实现了`done()`和`fail()`方法，其实都是then方法的shortcut�
 
 最后，Promises是如此的优雅！但也只是解决了回调的深层嵌套的问题，真正简化JavaScript异步编程的还是Generator，在Node.js端，建议考虑Generator。
 
-下一篇，就研究下Generator。
+下一篇，研究下Generator。
 
 ### 参考文献
 - [JavaScript Promises](http://www.html5rocks.com/en/tutorials/es6/promises/)
