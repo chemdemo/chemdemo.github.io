@@ -45,6 +45,12 @@ window.onload = function() {
         $('#list').find('> li:last-child').html('').append(img);
     };
 
+    function prepend() {
+        $('<li>')
+            .html('loading...')
+            .appendTo($('#list'));
+    };
+
     function run() {
         $('#done').hide();
         getData('map.json')
@@ -53,12 +59,7 @@ window.onload = function() {
 
                 return data.list.reduce(function(promise, item) {
                     return promise
-                        .then(function() {
-                            $('<li>')
-                                .html('loading...')
-                                .attr('title', item.desc)
-                                .appendTo($('#list'));
-                        })
+                        .then(prepend)
                         .then(sleep(1000))
                         .then(function() {
                             return getImg(item.url);
