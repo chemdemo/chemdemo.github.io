@@ -1,0 +1,17 @@
+{
+    "name": "thumb from http://pp.163.com/",
+    "list": [
+        {
+            "desc": "bird",
+            "url": "imgs/bird.jpg"
+        },
+        {
+            "desc": "dog",
+            "url": "imgs/dog.jpg"
+        },
+        {
+            "desc": "girl",
+            "url": "imgs/girl.jpg"
+        }
+    ]
+}

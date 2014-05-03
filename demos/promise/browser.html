@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>promise demo</title>
+<style type="text/css">
+    h1, p, ul, li {
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        text-align: center;
+        line-height: 100px;
+        width: 150px;
+        height: 100px;
+        border: 1px solid #DDD;
+        margin-bottom: 10px;
+    }
+
+    img {
+        max-width: 150px;
+        max-height: 100px;
+    }
+</style>
+</head>
+<body>
+    <h1>promise demo</h1>
+
+    <p><button id="run">run demo</button></p>
+
+    <h4></h4>
+
+    <ul id="list"></ul>
+
+    <p id="done" style="display: none;">done!</p>
+
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+<script src="https://github.com/chemdemo/promiseA/blob/master/lib/Promise.js"></script>
+<script src="browser.js"></script>
+<script>
+
+window.onload = function() {
+    function addImg(img) {
+        $('#list').find('> li:last-child').html('').append(img);
+    };
+
+    function run() {
+        $('#done').hide();
+        getData('map.json')
+            .then(function(data) {
+                $('h4').html(data.name);
+
+                return data.list.reduce(function(promise, item) {
+                    return promise
+                        .then(function() {
+                            $('<li>')
+                                .html('loading...')
+                                .attr('title', item.desc)
+                                .appendTo($('#list'));
+                        })
+                        .then(sleep(1000))
+                        .then(function() {
+                            return getImg(item.url);
+                        })
+                        .then(addImg);
+                }, Promise.resolve());
+            })
+            .then(sleep(300))
+            .then(function() {
+                $('#done').show();
+            });
+    };
+
+    $('#run').on('click', run);
+};
+</script>
+</body>
+</html>
