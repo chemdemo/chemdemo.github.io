@@ -1,4 +1,4 @@
-## Node.js系列之——module.exports与exorts
+## Node.js系列之——module.exports与exports
 
 *折腾Node.js有些日子了，下面将陆陆续续记录下使用Node.js的一些细节。*
 

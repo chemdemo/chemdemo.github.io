@@ -86,3 +86,4 @@ jst: {
 
 ok，其实就这么点内容，很简单的一个问题竟然用了这么大篇幅，罪过罪过。。
 
+改进之后的项目地址：[https://github.com/chemdemo/grunt-contrib-jst](https://github.com/chemdemo/grunt-contrib-jst)
