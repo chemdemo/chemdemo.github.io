@@ -1,6 +1,6 @@
 # JavaScript Promise启示录
 
-这篇文章，主要普及promise的用法，高手自觉绕道哈～
+本篇，主要普及promise的用法。
 
 一直以来，JavaScript处理异步都是以callback的方式，在前端开发领域callback机制几乎深入人心。在设计API的时候，不管是浏览器厂商还是SDK开发商亦或是各种类库的作者，基本上都已经遵循着callback的套路。
 
@@ -67,8 +67,6 @@ runA();
 
 - then方法接受两个参数，第一个参数是成功时的回调，在promise由“等待”态转换到“完成”态时调用，另一个是失败时的回调，在promise由“等待”态转换到“拒绝”态时调用。同时，then可以接受另一个promise传入，也接受一个“类then”的对象或方法，即thenable对象。
 
-注：对then的各种参数的处理是最复杂的部分，有兴趣的同学可以参看其他类Promise库的实现。
-
 可以看到，Promise规范的内容并不算多，大家可以试着自己实现以下Promise。
 
 以下是笔者自己在参考许多类Promise库之后简单实现的一个Promise，代码请移步[promiseA](https://github.com/chemdemo/promiseA/blob/master/lib/Promise.js)。
@@ -123,9 +121,9 @@ Promise.prototype.then = function(resolve, reject) {
 };
 ```
 
-这里，then做了简化，其他promise类库的实现比这个要复杂得多，同时功能也更多，比如还有第三个参数——notify，表示promise当前的进度，这在设计文件上传等时很有用。
+这里，then做了简化，其他promise类库的实现比这个要复杂得多，同时功能也更多，比如还有第三个参数——notify，表示promise当前的进度，这在设计文件上传等时很有用。对then的各种参数的处理是最复杂的部分，有兴趣的同学可以参看其他类Promise库的实现。
 
-在then的基础上，应该还需要至少两个方法，分别是完成promise的状态从pending到resolved到rejected的转换，同时执行相应的回调队列，即`resolve`和`reject`方法。
+在then的基础上，应该还需要至少两个方法，分别是完成promise的状态从pending到resolved或rejected的转换，同时执行相应的回调队列，即`resolve()`和`reject()`方法。
 
 到此，一个简单的promise就设计完成了，下面简单实现下两个promise化的函数：
 
@@ -133,11 +131,11 @@ Promise.prototype.then = function(resolve, reject) {
 function sleep(ms) {
 	return function(v) {
     	var p = Promise();
-        
+
         setTimeout(function() {
         	p.resolve(v);
         });
-        
+
         return p;
     };
 };
@@ -145,17 +143,17 @@ function sleep(ms) {
 function getImg(url) {
 	var p = Promise();
     var img = new Image();
-    
+
     img.onload = function() {
     	p.resolve(this);
     };
-    
+
     img.onerror = function(err) {
     	p.reject(err);
     };
-    
+
     img.url = url;
-    
+
     return p;
 };
 ```
@@ -166,15 +164,15 @@ function getImg(url) {
 function getImg(url) {
 	return Promise(function(resolve, reject) {
     	var img = new Image();
-        
+
         img.onload = function() {
             resolve(this);
         };
-        
+
         img.onerror = function(err) {
             reject(err);
         };
-        
+
         img.url = url;
     });
 };
@@ -226,6 +224,8 @@ $('#run').on('click', run);
 
 `Promise.reject(reason)`，生成一个以reason为否定结果的promise。
 
+我们实际的使用场景可能很复杂，往往需要多个异步的任务穿插执行，并行或者串行同在。这时候，可以对Promise进行各种扩展，比如实现`Promise.all()`，接受promises队列并等待他们完成再继续，再比如`Promise.any()`，promises队列中有任何一个处于完成态时即触发下一步操作。
+
 ### 标准的Promise
 
 可参考html5rocks的这篇文章[JavaScript Promises](http://www.html5rocks.com/en/tutorials/es6/promises/)，目前高级浏览器如chrome、firefox都已经内置了Promise对象，提供更多的操作接口，比如`Promise.all()`，支持传入一个promises数组，当所有promises都完成时执行then，还有就是更加友好强大的异常捕获，应对日常的异步编程，应该足够了。
@@ -257,25 +257,37 @@ function getImg(url) {
 
 ``` javascript
 // animate
-$('.box').animate({'opacity': 0}, 1000).promise().then(function() {
-    console.log('done');
-});
+$('.box')
+    .animate({'opacity': 0}, 1000)
+    .promise()
+    .then(function() {
+        console.log('done');
+    });
 
 // ajax
+$.ajax(options).then(success, fail);
 $.ajax(options).done(success).fail(fail);
+
+// ajax queue
+$.when($.ajax(options1), $.ajax(options2))
+    .then(function() {
+        console.log('all done.');
+    }, function() {
+        console.error('There something wrong.');
+    });
 ```
 
 jQuery还实现了`done()`和`fail()`方法，其实都是then方法的shortcut。
 
-至于处理promises队列，jQuery实现的是`$.when()`方法，用法和`Promise.all()`类似。
+处理promises队列，jQuery实现的是`$.when()`方法，用法和`Promise.all()`类似。
 
-其他类库，这里值得一提的是`when.js`，本身代码不多，完整实现Promise，同时支持browser和Node.js，而且提供更加丰富的API，是个不错的选择。这里限于篇幅，不再展开。
+其他类库，这里值得一提的是[when.js](https://github.com/cujojs/when)，本身代码不多，完整实现Promise，同时支持browser和Node.js，而且提供更加丰富的API，是个不错的选择。这里限于篇幅，不再展开。
 
 ### 尾声
 
 我们看到，不管Promise实现怎么复杂，但是它的用法却很简单，组织的代码很清晰，从此不用再受callback的折磨了。
 
-最后，Promises是如此的优雅！但也只是解决了回调的深层嵌套的问题，真正简化JavaScript异步编程的还是Generator，在Node.js端，建议考虑Generator。
+最后，Promise是如此的优雅！但Promise也只是解决了回调的深层嵌套的问题，真正简化JavaScript异步编程的还是Generator，在Node.js端，建议考虑Generator。
 
 下一篇，研究下Generator。
 
