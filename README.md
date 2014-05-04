@@ -1,3 +1,5 @@
-## My personal static site at github.
+## Personal static site at github.
 
-[chemdemo.github.com](http://chemdemo.github.com)
+A collection of issues and demos.
+
+[Issues list](https://github.com/chemdemo/chemdemo.github.io/issues)
