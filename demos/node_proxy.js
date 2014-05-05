@@ -7,9 +7,11 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
+var mime = require('mime');
 
-var root = '/';
-var log = fs.createWriteStream('./res.js');
+var root = 'E:/projs/svn/qqweb/igoods/dev/';
+// var log = fs.createWriteStream('./res.js');
+var rules = require('./rules');
 
 http.globalAgent.maxSockets = 10;
 
@@ -17,7 +19,6 @@ var proxy = http.createServer(function(req, res) {
     var u = req.url;
 
     if(u.match(/favicon/)) return;
-    console.log('>', u);
 
     if(undefined === req.headers['X-Forworded-For']) {
         req.headers['X-Forworded-For'] = req.socket.remoteAddress;
@@ -25,7 +26,6 @@ var proxy = http.createServer(function(req, res) {
 
     var method = req.method;
     var parsed = url.parse(u);
-    console.log(parsed.protocol, method)
     var options = {
         // host: parsed.hostname,
         // port: parsed.port || 80,
@@ -37,6 +37,9 @@ var proxy = http.createServer(function(req, res) {
         headers: req.headers
     };
 
+    // start proxy
+    console.log('[%s] > %s', method, u);
+
     if(method === 'POST') {
         var buf = [];
 
@@ -46,14 +49,31 @@ var proxy = http.createServer(function(req, res) {
 
         req.on('end', function() {
             options.data = Buffer.concat(buf);
-            makeRequest(options, res);
+            makeRequest(options, res, u);
         });
     } else {
-        makeRequest(options, res);
+        var pathname = parsed.pathname;
+
+        // Intercept
+        if(pathname === 'pub/check_bizup') return res.end('intercept');
+        if(pathname.match(/\/pc\/misc\/qmobile\/native\/package/)) return res.end('intercept');
+        // file replace
+        if(pathname.match(/\/m\/igoods\/(?:.*)\.(html|js|css|jpg|png)$/)) {
+            console.log('[replaced] < %s', u);
+
+            res.writeHead(200, {'Content-Type': mime.lookup(pathname)});
+
+            u = path.join(root, pathname.replace(/\/m\/igoods\/(.*)/, '$1'));
+
+            fs.createReadStream(u).pipe(res);
+            return;
+        }
+
+        makeRequest(options, res, u);
     }
 });
 
-var makeRequest = function(options, res, req) {
+var makeRequest = function(options, res, url) {
     var method = options.method;
     var client = http.request({
         host: options.host,
@@ -67,7 +87,7 @@ var makeRequest = function(options, res, req) {
 
     client.setTimeout(10000, function() {
         client.abort();
-        console.log('client request timeout:', u);
+        console.log('client request timeout:', url);
         res.end('client request timeout');
     });
 
@@ -80,6 +100,7 @@ var makeRequest = function(options, res, req) {
     client.on('response', function(response) {
         res.writeHead(response.statusCode, response.headers);
 
+        // var buf = [];
         // response.on('data', function(chunk) {
         //     buf.push(chunk);
         //     // res.write(chunk);
@@ -91,10 +112,11 @@ var makeRequest = function(options, res, req) {
         //     res.end(Buffer.concat(buf));
         // });
 
+        console.log('[%s] < %s', method, url);
         response.pipe(res);
 
         response.on('error', function(err) {
-            console.error(err);
+            console.error('error', err);
             client.abort();
             res.end(err.message);
         });
