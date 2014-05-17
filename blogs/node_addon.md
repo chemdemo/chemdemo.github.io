@@ -51,7 +51,7 @@ void init(Handle<Object> exports) {
 NODE_MODULE(AttrLib, init);
 ```
 
-接下来编写`binding.gyp`，它就是一个json格式的配置文件，node低版本使用wscript文件进行编译，高版本都采用binding.gyp，然后使用[node-gyp](https://github.com/TooTallNate/node-gyp)模块进行自动编译。
+接下来编写`binding.gyp`，它就是一个json格式的配置文件（node低版本使用wscript文件进行编译，高版本都采用binding.gyp），接着使用[node-gyp](https://github.com/TooTallNate/node-gyp)模块进行自动编译。
 
 ``` json
 {
