@@ -134,7 +134,7 @@ function sleep(ms) {
 
         setTimeout(function() {
         	p.resolve(v);
-        });
+        }, ms);
 
         return p;
     };
