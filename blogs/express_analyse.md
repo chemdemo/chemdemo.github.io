@@ -80,12 +80,25 @@ if (arity > 3) {
 
 然后是Express中间件的写法约定：通过形参来区分，三个参数是普通的中间件，四个参数的则表示这是一个错误处理中间件。中间件的雏形在此形成。
 
+
 ## Layer类
 
+这个模块主要是对[path-to-regexp](https://github.com/component/path-to-regexp)的封装，也是express独具特色的路由风格来源。
+
+构造函数传入一个path字符串，这个path其实就是我们在开发的时候所写的路由，比如：
+
+``` javascript
+app.get('/foo/:bar');
+app.get('/:foo/:bar');
+app.get('/:foo/(.*)');
+```
+
+然后原型上有一个`match()`方法，执行具体的匹配，然后把所匹配到的key和value保存到Layer实例的`params`属性上，这其实就是[req.params](http://expressjs.com/4x/api.html#req.params)的由来。
+
+Layer就这么简单，但是名字怪怪的。
 
 
-
-
+### 路由模块的入口：router/index.js
 
 
 
