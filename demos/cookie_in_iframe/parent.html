@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>cookie in iframe demo</title>
+</head>
+<body>
+    <script type="text/javascript">
+    // document.domain = 'aaa.com';
+    function writeCookie(key, value) {
+        var d = new Date();
+
+        // 1 min
+        d.setTime(d.getTime() + 60*1000);
+
+        document.cookie = key + '=' + value + ';expires=' + d.toGMTString();
+    };
+    writeCookie('foo', 'bar');
+    </script>
+    <iframe src="http://x.aaa.com/child.html"></iframe>
+</body>
+</html>
