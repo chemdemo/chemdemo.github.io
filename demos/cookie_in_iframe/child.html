@@ -6,25 +6,29 @@
 </head>
 <body>
     <script type="text/javascript">
-    function writeCookie(key, value) {
-        var d = new Date();
-
-        // 1 min
-        d.setTime(d.getTime() + 60*1000);
-
-        window.top.document.cookie = key + '=' + value + ';expires=' + d.toGMTString();
-    };
-
+    // in the different domain as parent.html
     onload = function() {
-        // throw exception when read parent page's cookie
+        // throw exception when reading parent page's cookie
         console.log(window.top.document.cookie);
 
-        // throw exception when read parent page's location
+        // throw exception when reading parent page's location
         console.log(window.top.location.href);
 
-        // throw exception when read parent page's location
+        // throw exception when reading parent page's location
         window.top.location.href = 'http://www.google.com';
     };
+
+    // in the same domain as parent.html
+    // onload = function() {
+    //     // can read parent's cookie
+    //     console.log(window.top.document.cookie);
+
+    //     // can read parent's location
+    //     console.log(window.top.location.href);
+
+    //     // can write parent's location
+    //     window.top.location.href = 'http://www.google.com';
+    // };
     </script>
 </body>
 </html>
