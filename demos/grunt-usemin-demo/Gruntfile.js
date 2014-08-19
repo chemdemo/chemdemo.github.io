@@ -62,7 +62,7 @@ module.exports = function(grunt) {
         },
 
         usemin: {
-            html: ['dist/*.html']
+            html: ['dist/*.html', 'dist/css/**/*.css']
         }
     });
 
