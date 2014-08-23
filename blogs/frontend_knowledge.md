@@ -283,7 +283,7 @@ fn(2); // 3
 
 * arguments, callee, caller, apply, call
 
-    * `arguments`，类数组，类似的还有NodeList、classList等对象。arguments的是根据传入的实参来创建的，与形参无关。
+    * `arguments`，类数组，类似的还有NodeList、classList等对象。根据ECMA-262的标准，arguments属性是基于传入的参数来新建arguments，不是基于命名参数的数量。
 
     * `arguments.callee`，返回正在执行的`Function`对象的一个引用
     ``` javascript
