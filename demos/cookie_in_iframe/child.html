@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>child page</title>
+</head>
+<body>
+    <script type="text/javascript">
+    // in the different domain as parent.html
+    onload = function() {
+        // throw exception when reading parent page's cookie
+        console.log(window.top.document.cookie);
+
+        // throw exception when reading parent page's location
+        console.log(window.top.location.href);
+
+        // throw exception when reading parent page's location
+        window.top.location.href = 'http://www.google.com';
+    };
+
+    // in the same domain as parent.html
+    // onload = function() {
+    //     // can read parent's cookie
+    //     console.log(window.top.document.cookie);
+
+    //     // can read parent's location
+    //     console.log(window.top.location.href);
+
+    //     // can write parent's location
+    //     window.top.location.href = 'http://www.google.com';
+    // };
+    </script>
+</body>
+</html>
