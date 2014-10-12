@@ -111,7 +111,7 @@ return mongoose.model('Entry_' + Date.now(), schema, collectionName);
 ``` js
 var schema;
 function getModel(collectionName) {
-    schema = schema ? schema : new Schema({
+    if(!schema) schema = new Schema({
         order: {type: number, index: true},
         name: String,
         score: Number
