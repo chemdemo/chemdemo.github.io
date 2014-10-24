@@ -30,11 +30,11 @@
 
 - 合并分支到master：
 
-``` bash
-git checkout master
-git merge dev
-git branch -d dev
-```
+    ``` bash
+    git checkout master
+    git merge dev
+    git branch -d dev
+    ```
 
 - 直接clone dev分支：`git clone -b dev <proj url>`
 
