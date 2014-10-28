@@ -197,7 +197,7 @@ mongod --port 27021
 
 ``` bash
 use test;
-db.testtable.insert({'foo': 'bar'});
+db.testcoll.insert({'foo': 'bar'});
 ```
 
 在命令行将看到错误信息`WriteResult({ "writeError" : { "code" : undefined, "errmsg" : "not master" } })`，说明副本集是不能写入的。
@@ -206,14 +206,14 @@ db.testtable.insert({'foo': 'bar'});
 
 ``` bash
 use test;
-db.testtable.insert({'foo': 'bar'});
+db.testcoll.insert({'foo': 'bar'});
 ```
 
 再切到副本集读数据：
 
 ``` bash
 use test;
-db.testtable.find();
+db.testcoll.find();
 ```
 
 这时候又看到报错`error: { "$err" : "not master and slaveOk=false", "code" : 13435 }`，显示需要开启副本集可写，运行：
@@ -265,6 +265,45 @@ oplog.rs表存放本机的所有操作记录，方便和主服务器进行对比
 但是，集群怎么做到自动扩容呢？
 
 答案是有的，就是分片模式。这里限于篇幅，不再继续，下一篇实践下分片。
+
+== 10.28更新 ==
+
+副本集模式，虽然可以自动切换主节点，但是我们还是会碰到需要手动切换主节点的情况，比如在应用程序配置好了写入节点为`192.168.44.171:27020`，过一段时间之后主节点机器宕机重启之后，集群的主节点已经换成`192.168.42.14:27020`，这时候要么修改程序配置然后重启程序，要么手动切换主节点。显然，后一种办法风险更小，毕竟线上的程序不能轻易重启。
+
+切换主节点的操作必须在主节点上操作，登陆现主节点：
+
+``` bash
+mongo --host 192.168.42.14 --port 27020
+```
+
+可以看到，mongodb shell显示`PRIMARY>`表示它是主节点。
+
+使用`rs.reconfig()`方法切换主节点：
+
+```bash
+rs.reconfig({
+    _id: "mstats",
+    members: [
+        {
+            _id: 0,
+            host: "192.168.44.171:27020",
+            priority: 2
+        },
+        {
+            _id: 1,
+            host: "192.168.44.171:27021"
+        },
+        {
+            _id: 2,
+            host: "192.168.42.14:27020"
+        }
+    ]
+});
+```
+
+通过设置优先级`priority`的方式指定谁是主节点（默认的优先级是1）。
+
+如果切换成功，可以看到mongodb shell已经变成`SECONDARY>`。
 
 ### 参考文献
 
