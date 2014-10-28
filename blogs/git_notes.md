@@ -5,11 +5,11 @@
 
 - git init：初始化项目
 
-- git add [file]：向本地仓库添加文件
+- git add <file...>：向本地仓库添加文件
 
 - git commit：提交修改到本地仓库
 
-- git push [remote name]/[branch name]：向远程仓库提交代码`git push team/proj1`
+- git push <remote name>/<branch name>: 向远程仓库提交代码`git push team/proj1`
 
 - git status：查看本地仓库状态
 
@@ -65,6 +65,6 @@
 
 - 获取远程tag：`git fetch origin tag <tagname>`
 
-- 删除tag：`git push -d v0.1.0`
+- 删除tag：`git tag -d v0.1.0`
 
-- 删除远程tag：`git push -d origin tag <tagname>`
+- 删除远程tag：`git push -delete origin <tagname>`
