@@ -305,6 +305,8 @@ rs.reconfig({
 
 如果切换成功，可以看到mongodb shell已经变成`SECONDARY>`。
 
+显式设置优先级`priority`之后，即使主节点机器宕机，重启恢复之后它还是主节点。
+
 ### 参考文献
 
 [搭建高可用mongodb集群（三）—— 深入副本集内部机制](http://www.lanceyan.com/tech/mongodb_repset2.html)
