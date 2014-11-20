@@ -88,15 +88,15 @@ iptables -A OUTPUT -d 75.101.156.249 -p tcp --source-port 27017 -m state --state
 
 ``` bash
 IPT="/sbin/iptables"
-$IPT --delete-chain
-$IPT --flush
+$IPT -F
 $IPT -P INPUT DROP    #1
-$IPT -P FORWARD DROP  #1
 $IPT -P OUTPUT ACCEPT   #1
+$IPT -P FORWARD DROP  #1
 $IPT -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT #设置当连接状态为RELATED和ESTABLISHED时，允许数据进入服务器
 $IPT -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT #3
 $IPT -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT #3
 $IPT -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT #3
+$IPT -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT # dns server
 $IPT -A INPUT -s 75.101.156.249 -p tcp --destination-port 27017 -m state --state NEW,ESTABLISHED -j ACCEPT
 # $IPT -A INPUT -p tcp -m tcp --dport 21 -j ACCEPT  #建议采用sftp连接
 $IPT -A INPUT -i lo -p all -j ACCEPT #4
@@ -113,7 +113,7 @@ $IPT -A FORWARD -p icmp -m limit --limit 1/s --limit-burst 10 -j ACCEPT # 设置
 # $IPT -A OUTPUT -o lo -j ACCEPT #4
 # $IPT -A OUTPUT -p tcp -m tcp --dport 80 -j ACCEPT #8
 # $IPT -A OUTPUT -p tcp -m tcp --dport 443 -j ACCEPT #9
-service iptables save
+iptables-save | tee /etc/sysconfig/iptables
 service iptables restart
 ```
 
@@ -147,6 +147,8 @@ iptables -X #清除预设表filter中使用者自定链中的规则
     ESTABLISHED: 第一服务器接收到SYN-ACK数据包并发送给第二服务器ACK服务器来做最后的确认，至此连接建立完成，两台服务器开始传输数据
 
 ### 参考文献
+
+- [How To Setup a Basic IP Tables Configuration on Centos 6](https://www.digitalocean.com/community/tutorials/how-to-setup-a-basic-ip-tables-configuration-on-centos-6)
 
 - [适合Web服务器的iptables规则](https://www.centos.bz/2011/09/example-webserver-iptable-ruleset/)
 
