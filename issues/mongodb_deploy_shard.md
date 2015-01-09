@@ -1,4 +1,4 @@
-# MongoDB分片部署
+# MongoDB分片部署实战
 
 本篇记录MongoDB高可用模式部署步骤，其他部署方式见[上一篇](https://github.com/chemdemo/chemdemo.github.io/issues/8)。
 
