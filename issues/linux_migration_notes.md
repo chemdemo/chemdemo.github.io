@@ -1,4 +1,6 @@
-几经折腾，总算成功把团队博客迁移到新的VPS，并完成部署。一开始使用外网机器[hostmonster](hostmonster.com)，hostmonster还挺划算，￥700多一年，不限容量和流量，只是在米国的机器太慢。后来公司运维同事提供了IDC支持，因此迁回，再后来是发生了点小意外，不得不从IDC迁出，自己找地儿放，综合考虑了下，打算试用下口碑不错的[Linode](https://www.linode.com/)，期间是各种折腾和走弯路，linux的东西还是定制化比较好，避免重复性的工作，在这里感慨下，做运维的童鞋也不容易哈～  
+几经折腾，总算成功把团队博客迁移到新的VPS，并完成部署。一开始使用外网机器[hostmonster](hostmonster.com)，hostmonster还挺划算，￥700多一年，不限容量和流量，只是在米国的机器太慢。
+
+后来公司运维同事提供了IDC支持，因此迁回，再后来是发生了点小意外，不得不从IDC迁出，自己找地儿放，综合考虑了下，打算试用下口碑不错的[Linode](https://www.linode.com/)，期间是各种折腾和走弯路，linux的东西还是定制化比较好，避免重复性的工作，在这里感慨下，做运维的童鞋也不容易哈～
 
 ### Linode账号注册
 
@@ -11,24 +13,24 @@
 
 接下来就开始搞机了：
 
-* #### 更新下系统软件
+#### 更新下系统软件
 ``` bash
 yum update
 ```
 
-* #### 设置Hostname，给机器起个名字，ip记不住
+#### 设置Hostname，给机器起个名字，ip记不住
 ``` bash
 echo 'HOSTNAME=alloyteam' >> /etc/sysconfig/network
 hostname 'alloyteam'
 ```
 
-* #### 设置下区时，设置为香港时间
+#### 设置下区时，设置为香港时间
 ``` bash
 ln -sf /usr/share/zoneinfo/Hongkong /etc/localtime
 ```
 其实就是做个软链接
 
-* #### 添加个用户，root权限太高
+#### 添加个用户，root权限太高
 ``` bash
 adduser *[user]*
 usermod -a -G sudo *[user]*
@@ -113,4 +115,4 @@ update wp_users set user_pass=MD5("PASSWORD") where wp_users.user_nicename='[use
 
 到此为止，算是基本完成wordpress站点的恢复，后面是准备搭建nodejs环境进行各种折腾。  
 
-一开始比较盲目去配置，走了不少的弯路，因为一开始分配的ip被传说中的`GWT`给挡在墙外了，ssh和ftp连接一直不稳定，还以为是配置的原因，然后进行了很久的折腾配置，当时真的是想shi的心都有了。第二天果断寻求linode官方技术支持，没想到客服很给力，第一时间回复并给出解决建议，其中ip被墙那个，看得出来我们不是第一个，客服GG用很娴熟的语气说大概是你ip被**block**了，我给你换一个ip试试，然后，所有问题都不再是问题了！赞下linode客服，5分！  
+一开始比较盲目去配置，走了不少的弯路，因为一开始分配的ip被传说中的`GWT`给挡在墙外了，ssh和ftp连接一直不稳定，还以为是配置的原因，然后进行了很久的折腾配置，当时真的是想shi的心都有了。第二天果断寻求linode官方技术支持，没想到客服很给力，第一时间回复并给出解决建议，其中ip被墙那个，看得出来我们不是第一个，客服GG用很娴熟的语气说大概是你ip被**block**了，我给你换一个ip试试，然后，所有问题都不再是问题了！ 
