@@ -61,7 +61,7 @@ cat /etc/sysconfig/iptables | grep -v '^#'
 采用nginx+fastcgi作为反向代理和负载均衡器，并使用fastcgi处理php脚本，据说比apache要快，这个按照[文档](https://library.linode.com/lemp-guides/centos-6)一步步来就好了。  
 
 下面是配置nginx，http部分再原来基础上开启gzip和设置下常用的文件mime types
-``` nginx
+``` bash
 include         mime.types;
 gzip            on;
 gzip_comp_level 5;
@@ -69,11 +69,11 @@ gzip_min_length 1024;
 keepalive_timeout  65;
 ```
 通过`include`的方式引入各反向代理的配置文件
-``` nginx
+``` bash
 include vhost/*.conf
 ```
 接下来配置反向代理，由于主域名下有好多个子域名，各个站点又是彼此独立的文件夹，故这里采用泛域名解析：
-``` nginx
+``` bash
 server_name ~^(?<subdomain>.+)\.alloyteam\.com$;
 root /[rootpath]/$subdomain;
 \# error_log /[logpath]/$host.error.log error; # nginx日志不支持变量，蛋疼
@@ -83,7 +83,7 @@ error_log /[logpath]/alloysites.error.log error;
 这里太坑了，log path不支持变量，想每个host指定一个log文件都不行，只能先合到一起，配置下log format来区分咯。    
 *有个小工具`pcretest`可以测试下nginx配置的正则表达式*  
 其他地方参考默认的配置即可，php文件的`fastcgi_param`参数作如下设置
-``` nginx
+``` bash
 fastcgi_param   domain $subdomain;
 fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
 ```
@@ -102,14 +102,14 @@ chkconfig --add mysqld;chkconfig mysqld on;
 /etc/init.d/mysqld restart
 ```
 mysql数据库导入
-``` sql
+``` bash
 mysql -h localhost -d [db_name] -uroot -p[rootpass] < /tmp/localhost.sql --default-character-set=utf8; /* 导入sql */
 insert into mysql.user(Host,User,Password) values("localhost","[user]",password("[pass])); /* 新建用户 */
 grant all privileges on [dbname].* to [user]@localhost identified by '[pass]'; /* 分配权限 */
 flush privileges; /* 刷新系统权限 */
 ```
 根据需要重置下管理员账号密码
-``` sql
+``` bash
 update wp_users set user_pass=MD5("PASSWORD") where wp_users.user_nicename='[user]';
 ```
 
