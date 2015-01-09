@@ -39,7 +39,7 @@ usermod -a -G sudo *[user]*
 接着给*user*账户设置密码：`passwd *user`安提示输入两遍即可，至于声称ssh key什么的就算了，每次都输下密码感觉踏实些（心理作用），嘿嘿  
 完成之后`logout`登出，用新账户登入
 
-* #### 简单配置下防火墙（iptables）
+#### 简单配置下防火墙（iptables）
 按照[教程](https://library.linode.com/securing-your-server)里写的，把rules规则贴到iptables.firewall.rules文件里，然后导入到iptables配置文件：
 ``` bash
 iptables-restore < /etc/iptables.firewall.rules
@@ -57,10 +57,10 @@ iptables -L
 cat /etc/sysconfig/iptables | grep -v '^#'
 ```
 
-* #### 安装LEMP环境
+#### 安装LEMP环境
 采用nginx+fastcgi作为反向代理和负载均衡器，并使用fastcgi处理php脚本，据说比apache要快，这个按照[文档](https://library.linode.com/lemp-guides/centos-6)一步步来就好了。  
 
-* 下面是配置nginx，http部分再原来基础上开启gzip和设置下常用的文件mime types
+下面是配置nginx，http部分再原来基础上开启gzip和设置下常用的文件mime types
 ``` nginx
 include         mime.types;
 gzip            on;
@@ -92,7 +92,7 @@ ok，完成，保存退出后，重启nginx，语法检查通过之后会看到�
 service nginx restart
 ```
 
-* mysql的安装配置，指定下db path和log path
+mysql的安装配置，指定下db path和log path
 ``` bash
 vim /etc/my.cnf
 ```
