@@ -38,6 +38,7 @@
         <link href="120.png" rel="apple-touch-icon" />
     </head>
     <body>
+    <a href="brand-416186-0-0-0-1-0-1-20.html" class="u-brand-pic J_item-list">go2 brand</a>
     <script type="text/javascript">document.write(document.cookie);</script>
     </body>
 </html>
