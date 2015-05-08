@@ -45,6 +45,7 @@
 ```
 
 浏览器截图：
+
 ![apple-icon-debug](../img/apple-touch-icon-safari.png)
 
 发送到桌面打开后奇迹出现了，看到的cookie和safari一样！！
@@ -55,6 +56,7 @@
 ```
 
 再加上这个meta标签之后，从桌面启动看到这样：
+
 ![apple-icon-debug](../img/apple-touch-icon-desktop.png)
 
 整个页面是全屏的，导航条和地址栏都没了，看起来更像是原生app，但是cookie莫名其妙的变了！！
