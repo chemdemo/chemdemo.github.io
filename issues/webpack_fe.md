@@ -278,7 +278,7 @@ webpackJsonp([0], {
 
 从输出结果可以看到，webpack内部实现了一个全局的`webpackJsonp()`用于加载处理后的资源，并且webpack把资源进行重新编号，每一个资源成为一个模块，对应一个id，后边是模块的内部实现，而这些操作都是webpack内部处理的，使用者无需关心内部细节甚至输出结果。
 
-上面的输出代码，因篇幅限制删除了其他模块的内部实现细节，完整的输出请看[a.out.js](../demos/webpack_fe/a.out.js)，来看看图片的输出：
+上面的输出代码，因篇幅限制删除了其他模块的内部实现细节，完整的输出请看[a.out.js](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/demos/webpack_fe/a.out.js)，来看看图片的输出：
 
 ``` js
 /***/24:
@@ -362,8 +362,9 @@ if('toast' === component) {
 
 url分别输入不同的参数，得到瀑布图：
 
-![code_splitting1](../img/webpack_fe/code_splitting1.jpg)
-![code_splitting2](../img/webpack_fe/code_splitting2.jpg)
+![code_splitting1](https://github.com/chemdemo/chemdemo.github.io/blob/master/img/webpack_fe/code_splitting1.jpg)
+
+![code_splitting2](https://github.com/chemdemo/chemdemo.github.io/blob/master/img/webpack_fe/code_splitting2.jpg)
 
 webpack将`require.ensure()`包裹的部分单独打包了，即图中看到的`[hash].chunk.js`，既解决了异步加载的问题，又保证了加载到的是最新的chunk的内容。
 
@@ -423,7 +424,7 @@ app.use(webpackDevMiddleware(webpack(webpackConf), {
 
 启动HMR之后，每次保存都会重新编译生成新的chnuk，通过控制台的log，可以很直观地看到这一过程：
 
-![HMR build](../img/webpack_fe/hmr_build.png)
+![HMR build](https://github.com/chemdemo/chemdemo.github.io/blob/master/img/webpack_fe/hmr_build.png)
 
 ##### 组件化
 
