@@ -362,9 +362,9 @@ if('toast' === component) {
 
 url分别输入不同的参数，得到瀑布图：
 
-![code_splitting1](https://github.com/chemdemo/chemdemo.github.io/blob/master/img/webpack_fe/code_splitting1.jpg)
+![code_splitting1](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/code_splitting1.jpg)
 
-![code_splitting2](https://github.com/chemdemo/chemdemo.github.io/blob/master/img/webpack_fe/code_splitting2.jpg)
+![code_splitting2](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/code_splitting2.jpg)
 
 webpack将`require.ensure()`包裹的部分单独打包了，即图中看到的`[hash].chunk.js`，既解决了异步加载的问题，又保证了加载到的是最新的chunk的内容。
 
@@ -390,7 +390,7 @@ HMR简单说就是webpack启动一个本地webserver（webpack-dev-server），�
 
 下面这张来自webpack官网的图片，可以很清晰地说明`module`、`entry`、`chunk`三者的关系以及webpack如何实现热更新的：
 
-![HMR](../img/webpack_fe/hmr.jpg)
+![HMR](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/hmr.jpg)
 
 enter0表示入口文件，chunk1~4分别是提取公共模块所生成的资源块，当模块4和9发生改变时，因为模块4被打包在chunk1中，模块9打包在chunk3中，所以HMR runtime会将变更部分同步到chunk1和chunk3中对应的模块，从而达到hot replace。
 
@@ -424,7 +424,7 @@ app.use(webpackDevMiddleware(webpack(webpackConf), {
 
 启动HMR之后，每次保存都会重新编译生成新的chnuk，通过控制台的log，可以很直观地看到这一过程：
 
-![HMR build](https://github.com/chemdemo/chemdemo.github.io/blob/master/img/webpack_fe/hmr_build.png)
+![HMR build](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/hmr_build.png)
 
 ##### 组件化
 
@@ -532,7 +532,7 @@ webpack以一种非常优雅的方式解决了前端资源依赖管理的问题�
 
 附上笔者根据本篇的理论所完成的一个纯静态页面型前端自动化解决方案模板：
 
-[https://github.com/chemdemo/webpack-bootstrap](https://github.com/chemdemo/webpack-bootstrap)
+[webpack-bootstrap](https://github.com/chemdemo/webpack-bootstrap)
 
 
 （完）。
