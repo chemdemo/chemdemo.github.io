@@ -1,4 +1,4 @@
-# 前端工程解决方案探索（上篇）
+# 基于webpack的前端工程解决方案探索（上篇）
 
 本篇主要介绍webpack的基本原理以及基于webpack搭建**纯静态页面型**前端自动化解决方案的思路。
 
@@ -117,11 +117,11 @@ app.listen(3005, '0.0.0.0', function() {
 ```
 
 运行`node app`启动本地server，浏览器输入`http://localhost:8080/a.html`即可看到页面内容，最基本的环境就算搭建完成。
-    
+
 ##### 动态请求支持
 
 我们的本地server是`localhost`域，在ajax请求时为了突破前端同源策略的限制，本地server需支持代理其他域下的api的功能，即proxy。同时还要支持对未完成的api进行mock的功能。
-    
+
 ``` js
 // app.js
 var router = require('koa-router')();
@@ -129,7 +129,7 @@ var routes = require('./routes');
 routes(router, app);
 app.use(router.routes());
  ```
-    
+
 ``` js
 // routes.js
 var proxy = require('koa-proxy');
@@ -234,41 +234,41 @@ require("!style!css!less!bootstrap/less/bootstrap.less");
 
 ``` js
 webpackJsonp([0], {
-    /***/0: 
+    /***/0:
     /***/function(module, exports, __webpack_require__) {
-        
+
         __webpack_require__(6);
-        
+
         var foo = __webpack_require__(25);
         var bar = __webpack_require__(26);
-        
+
         var loadingImg = __webpack_require__(24);
         var img = document.createElement('img');
-        
+
         img.src = loadingImg;
     },
-    
-    /***/6: 
+
+    /***/6:
     /***/function(module, exports, __webpack_require__) {
         ...
     },
-    
-    /***/7: 
+
+    /***/7:
     /***/function(module, exports, __webpack_require__) {
         ...
     },
-    
-    /***/24: 
+
+    /***/24:
     /***/function(module, exports) {
         ...
     },
-    
-    /***/25: 
+
+    /***/25:
     /***/function(module, exports) {
         ...
     },
-    
-    /***/26: 
+
+    /***/26:
     /***/function(module, exports) {
         ...
     }
@@ -283,7 +283,7 @@ webpackJsonp([0], {
 ``` js
 /***/24:
 /***/function(module, exports) {
-    
+
     module.exports = "data:image/png;base64,...";
 
     /***/
