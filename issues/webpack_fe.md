@@ -184,7 +184,7 @@ module.exports = function(router, app) {
 
 
 ``` js
-// webpack.config.json
+// webpack.config.js
 // webpack loaders的配置示例
 ...
 loaders: [
@@ -312,7 +312,7 @@ webpackJsonp([0], {
 {
     test: /\.(jpe?g|png|gif|svg)$/i,
     loaders: [
-        'image?...}',
+        'image?...',
         'url?limit=10000&name=img/[hash:8].[name].[ext]',
     ]
 }
