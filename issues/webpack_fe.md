@@ -66,7 +66,7 @@ html、css和js的配合才能保证webapp的运行，增量安装是按需加�
 
 ### 前端开发环境搭建
 
-##### 主要目录结构
+#### 主要目录结构
 
 ``` js
 - webapp/               # webapp根目录
@@ -103,7 +103,7 @@ html、css和js的配合才能保证webapp的运行，增量安装是按需加�
 
 这是个经典的前端项目目录结构，项目目结构在一定程度上约定了开发规范。业务开发的同学只需关注`src`目录即可，开发时尽可能最小化模块粒度，这是异步加载的需要。`assets`是整个工程的产出，无需关注里边的内容是什么，至于怎么打包和解决资源依赖的，往下看。
 
-##### 本地开发服务器
+#### 本地开发服务器
 
 我们使用开源web框架搭建一个webserver，便于本地开发和调试，以及灵活地处理前端路由，以`koa`为例，主要代码如下：
 
@@ -134,7 +134,7 @@ app.listen(3005, '0.0.0.0', function() {
 
 如果只是处理静态资源请求，可以有很多的替代方案，如Fiddler替换文件、本地起Nginx服务器等等。搭建一个Web服务器，它能够非常灵活地配置路由和处理动态请求，可以任意定制开发环境的个性化需求用于提升开发效率，总之local webserver拥有无限的可能。
 
-##### 动态请求支持
+#### 动态请求支持
 
 我们的local server是`localhost`域，在ajax请求时为了突破前端同源策略的限制，本地server需支持代理其他域下的api的功能，即proxy。同时还要支持对未完成的api进行mock的功能。
 
@@ -178,7 +178,7 @@ module.exports = function(router, app) {
 
 ### webpack对资源的处理
 
-##### 资源加载
+#### 资源加载
 
 根据webpack的设计理念，所有资源都是“模块”，webpack内部实现了一套资源加载机制，这与Requirejs、Sea.js、Browserify等实现有所不同，除了借助插件体系加载不同类型的资源文件之外，webpack还对输出结果提供了非常精细的控制能力，开发者只需要根据需要调整参数即可：
 
@@ -240,7 +240,7 @@ require("!style!css!less!bootstrap/less/bootstrap.less");
 
 `require()`时指定的loader会覆盖配置文件里对应的loader配置项。
 
-##### 资源依赖处理
+#### 资源依赖处理
 
 通过loader机制，可以不需要做额外的转换即可加载浏览器不直接支持的资源类型，如`.scss`、`.less`、`.json`、`.ejs`等。
 
@@ -322,7 +322,7 @@ webpackJsonp([0], {
 
 对于css文件，默认情况下webpack会把css content内嵌到js里边，运行时会使用`style`标签内联。如果希望将css使用`link`标签引入，可以使用`ExtractTextPlugin`插件进行提取。
 
-##### 资源的编译输出
+#### 资源的编译输出
 
 webpack的三个概念：模块（module）、入口文件（entry）、分块（chunk）。
 
@@ -398,7 +398,7 @@ plugins: [
 ],
 ```
 
-##### 资源的动态更新
+#### 资源的动态更新
 
 引用模块，webpack提供了`require()`API（也可以通过添加bable插件来支持ES6的`import`语法）。但是在开发阶段不可能改一次编译一次，webpack提供了强大的热更新支持，即[HMR(hot module replace)](http://webpack.github.io/docs/hot-module-replacement-with-webpack.html)。
 
@@ -442,7 +442,7 @@ app.use(webpackDevMiddleware(webpack(webpackConf), {
 
 ![HMR build](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/hmr_build.png)
 
-##### 组件化
+#### 组件化
 
 webpack解决了资源依赖的问题，这使得封装组件变得很容易，例如：
 
@@ -493,7 +493,7 @@ import React from 'react';
 
 对于依赖的不能被正确resoved的资源，请查阅webpack的[externals](http://webpack.github.io/docs/configuration.html#externals)配置。
 
-##### 项目开发
+#### 项目开发
 
 由于入口文件是手动使用script引入的，在webpack编译之后入口文件的名称和路径一般会改变，即开发环境和生产环境引用的路径不同：
 
@@ -547,8 +547,6 @@ local server解决了本地开发环境的问题，webpack解决了开发和生�
 webpack以一种非常优雅的方式解决了前端资源依赖管理的问题，内部做了很多事情，但是对于使用者而言要达到相同的目的只需要做少量的配置，再结合构建工具，很容易搭建一套前端工程解决方案。
 
 附上笔者根据本篇的理论所完成的一个纯静态页面型前端自动化解决方案模板：
-
 [webpack-bootstrap](https://github.com/chemdemo/webpack-bootstrap)
-
 
 （完）。
