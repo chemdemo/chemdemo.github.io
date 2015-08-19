@@ -69,27 +69,41 @@ html、css和js的配合才能保证webapp的运行，增量安装是按需加�
 ##### 主要目录结构
 
 ``` js
-- webapp/
-  - src/               # 开发目录
-    + css/             # css资源
-    + img/             # 图片资源
-    + js/              # js&jsx文件
-    + tmpl/            # 前端模板文件目录
-    a.html             # 入口文件a
-    b.html             # 入口文件b
-  + assets/            # 编译输出目录
-  + mock/              # 假数据文件
-  app.js               # 本地server入口
-  routes.js            # 本地路由配置
-  webpack.config.json  # webpack配置文件
-  gulpfile.js          # gulp任务配置
-  package.json         # 项目配置
-  README.md            # 项目说明
+- webapp/               # webapp根目录
+  - src/                # 开发目录
+    + css/              # sass生成的css资源目录
+    + img/              # webapp图片资源目录
+    - js/               # webapp js&jsx资源目录
+      - components/     # 标准组件存放目录
+          - foo/        # 组件foo
+            + css/      # 组件foo的样式
+            + js/       # 组件foo的逻辑
+            + tmpl/     # 组件foo的模板
+            index.js    # 组件foo的入口
+          + bar/        # 组件bar
+      + lib/            # 第三方纯js库
+      ...               # 根据项目需要任意添加的代码目录
+    + tmpl/             # webapp前端模板资源目录
+    a.html              # webapp入口文件a
+    b.html              # webapp入口文件b
+  - assets/             # 编译输出目录，即发布目录
+    + js/               # 编译输出的js目录
+    + img/              # 编译输出的图片目录
+    + css/              # 编译输出的css目录
+    a.html              # 编译输出的入口a
+    b.html              # 编译处理后的入口b
+  + mock/               # 假数据目录
+  app.js                # 本地server入口
+  routes.js             # 本地路由配置
+  webpack.config.js     # webpack配置文件
+  gulpfile.js           # gulp任务配置
+  package.json          # 项目配置
+  README.md             # 项目说明
 ```
 
-这是个经典的前端项目目录结构，`src`目录存储所有开发所需的资源。
+这是个经典的前端项目目录结构，项目目结构在一定程度上约定了开发规范。业务开发的同学只需关注`src`目录即可，开发时尽可能最小化模块粒度，这是异步加载的需要。`assets`是整个工程的产出，无需关注里边的内容是什么，至于怎么打包和解决资源依赖的，往下看。
 
-##### 本地开发环境
+##### 本地开发服务器
 
 我们使用开源web框架搭建一个webserver，便于本地开发和调试，以及灵活地处理前端路由，以`koa`为例，主要代码如下：
 
@@ -118,9 +132,11 @@ app.listen(3005, '0.0.0.0', function() {
 
 运行`node app`启动本地server，浏览器输入`http://localhost:8080/a.html`即可看到页面内容，最基本的环境就算搭建完成。
 
+如果只是处理静态资源请求，可以有很多的替代方案，如Fiddler替换文件、本地起Nginx服务器等等。搭建一个Web服务器，它能够非常灵活地配置路由和处理动态请求，可以任意定制开发环境的个性化需求用于提升开发效率，总之local webserver拥有无限的可能。
+
 ##### 动态请求支持
 
-我们的本地server是`localhost`域，在ajax请求时为了突破前端同源策略的限制，本地server需支持代理其他域下的api的功能，即proxy。同时还要支持对未完成的api进行mock的功能。
+我们的local server是`localhost`域，在ajax请求时为了突破前端同源策略的限制，本地server需支持代理其他域下的api的功能，即proxy。同时还要支持对未完成的api进行mock的功能。
 
 ``` js
 // app.js
@@ -332,11 +348,11 @@ output: {
 }
 ```
 
-其中`entry`项是入口文件路径映射表，`output`项是对输出文件路径和名称的配置，占位符如`[id]`、`[chunkhash]`、`[name]`等分别代表编译后的模块id、chunk的hashnum值、chunk文件名等，可以任意组合决定最终输出的资源格式。
+其中`entry`项是入口文件路径映射表，`output`项是对输出文件路径和名称的配置，占位符如`[id]`、`[chunkhash]`、`[name]`等分别代表编译后的模块id、chunk的hashnum值、chunk名等，可以任意组合决定最终输出的资源格式。hashnum的做法，基本上弱化了版本号的概念，版本迭代的时候chunk是否更新只取决于chnuk的内容是否发生变化。
 
 细心的同学可能会有疑问，entry表示入口文件，需要手动指定，那么chunk到底是什么，chunk是怎么生成的？
 
-在开发webapp时，总会有一些功能是使用过程中才会用到的，对于这部分我们希望做成异步加载，所以这部分的代码一般不用打包到入口文件里边。
+在开发webapp时，总会有一些功能是使用过程中才会用到的，出于性能优化的需要，对于这部分资源我们希望做成异步加载，所以这部分的代码一般不用打包到入口文件里边。
 
 对于这一点，webpack提供了非常好的支持，即[code splitting](http://webpack.github.io/docs/code-splitting.html)，即使用`require.ensure()`作为代码分割的标识。
 
@@ -360,7 +376,7 @@ if('toast' === component) {
 }
 ```
 
-url分别输入不同的参数，得到瀑布图：
+url分别输入不同的参数后得到瀑布图：
 
 ![code_splitting1](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/code_splitting1.jpg)
 
@@ -454,7 +470,7 @@ someMethod();
 正如开头我们说的，将三种语言、多种资源合并成js来管理，大大降低了维护成本。
 
 
-webpack有一个配置项`resolve`，用于解决`require()`API的资源路径查找，可以把node_modules添加到search root列表里边，这样就可以直接在前端使用npm的模块了：
+webpack有一个配置项`resolve`，用于解决`require()`API的资源路径查找，可以把node_modules添加到search root列表里边，这样即达到前后端共享npm模块：
 
 ``` js
 // webpack.config.js
@@ -474,6 +490,8 @@ $ npm install jquery react --save
 import $ from 'jquery';
 import React from 'react';
 ```
+
+对于依赖的不能被正确resoved的资源，请查阅webpack的[externals](http://webpack.github.io/docs/configuration.html#externals)配置。
 
 ##### 项目开发
 
