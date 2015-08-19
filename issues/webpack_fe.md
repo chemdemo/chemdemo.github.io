@@ -42,7 +42,7 @@
 
 但是构建工具本身有一定的使用门槛，配置过于复杂并且不能够完全解决我们的需求，所以前端工程化很难做，根本原因是前端的复杂性和特殊性。
 
-诚如 张云龙@fouber 所言：
+诚如 张云龙[@fouber](https://github.com/fouber) 所言：
 
 > 前端是一种特殊的GUI软件，它有两个特殊性：一是前端由三种编程语言组成，二是前端代码在用户端运行时增量安装。
 
@@ -328,7 +328,7 @@ output: {
     path: path.resolve(debug ? '__build' : './assets/'),
     filename: debug ? '[name].js' : 'js/[chunkhash:8].[name].min.js',
     chunkFilename: debug ? '[chunkhash:8].chunk.js' : 'js/[chunkhash:8].chunk.min.js',
-    publicPath: debug ? '/__build/' : 'http://cdn.site.com/'
+    publicPath: debug ? '/__build/' : ''
 }
 ```
 
@@ -459,7 +459,7 @@ webpack有一个配置项`resolve`，用于解决`require()`API的资源路径�
 ``` js
 // webpack.config.js
 resolve: {
-    root: [process.cwd() + 'src', process.cwd() + 'node_modules'],
+    root: [process.cwd() + '/src', process.cwd() + '/node_modules'],
     alias: {},
     extensions: ['', '.js', '.css', '.scss', '.ejs', '.png', '.jpg']
 },
@@ -524,11 +524,9 @@ output: {
 
 local server解决了本地开发环境的问题，webpack解决了开发和生产环境资源依赖管理的问题。在实际的开发中，可能会有许多额外的任务需要完成，比如对于使用compass生成sprites的项目，因目前webpack还不直接支持sprites，所以还需要compass watcher，再比如工程的remote deploy等，所以需要使用一些构建工具（如Gulp）的配合，真正打通研发的各个链路。
 
-前端的资源依赖管理，业界有多种解决方案，比如可以使用构建工具+一堆插件配置完成，但是无论是Grunt还是Gulp，配置的门槛不低，而且对于资源的依赖处理笔者一直没有找到一种比较满意的做法。
+前端的资源依赖管理，使用Grunt、Gulp等构建工具结合插件也能做，但是配置的门槛不低，而且在接触到webpack之前笔者一直没有找到一种比较满意的做法。
 
-相对成熟和完善的是百度的fis，在前端工程解决方案方面做的比较彻底。但是fis的使用成本也是比较高，如果想作为整个团队的自动化构建工具去推广，需要花时间去理解它的设计理论。
-
-webpack以一种非常优雅的方式解决了前端资源依赖管理的问题，webpack内部做了很多事情，但是对于使用者而言要达到相同的目的只需要做少量的配置，再结合构建工具，很容易搭建一套前端工程解决方案。
+webpack以一种非常优雅的方式解决了前端资源依赖管理的问题，内部做了很多事情，但是对于使用者而言要达到相同的目的只需要做少量的配置，再结合构建工具，很容易搭建一套前端工程解决方案。
 
 附上笔者根据本篇的理论所完成的一个纯静态页面型前端自动化解决方案模板：
 
