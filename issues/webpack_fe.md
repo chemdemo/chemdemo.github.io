@@ -1,10 +1,30 @@
-# 基于webpack的前端工程解决方案探索（上篇）
+# 基于webpack搭建前端工程解决方案探索
 
-本篇主要介绍webpack的基本原理以及基于webpack搭建**纯静态页面型**前端自动化解决方案的思路。
+本篇主要介绍webpack的基本原理以及基于webpack搭建前端项目工程化解决方案的思路。
 
-### 关于前端工程
+## 关于前端工程
 
-在很长一段时间里，或者说在前端这个职业诞生之初，前端很简单，比如下面简单的几行代码就能够成一个可运行前端应用：
+下面是百科关于“[软件工程](http://baike.baidu.com/link?url=8KWAhpkQgUuyqAdcnb0Y380yJ5Ol8pY1-cGPR_iegeVsmnskjrZPiTLsVavNguvCSwBzhLFpUMFtOK0EiQtmAcGQRREMQa6PqF-4L62jQqC)”的名词解释：
+
+> 软件工程是一门研究用工程化方法构建和维护有效的、实用的和高质量的软件的学科。
+
+其中，工程化是方法，是将软件研发的各个链路串接起来的工具。
+
+对于软件“工程化”，个人以为至少应当有如下特点：
+
+- 有IDE的支持，负责初始化工程、工程结构组织、debug、编译、打包等工作
+
+- 有固定或者约定的工程结构，规定软件所依赖的不同类别的资源的存放路径甚至代码的写法等
+
+- 软件依赖的资源可能来自软件开发者，也有可能是第三方，工程化需要集成对资源的获取、打包、发布、版本管理等能力
+
+- 和其他系统的集成，如CI系统、运维系统、监控系统等
+
+广泛意义上讲，前端也属于软件工程的范畴。
+
+但前端没有Eclipse、Visual Studio等为特定语言量身打造的IDE。因为前端不需要编译，即改即生效，在开发和调试时足够方便，只需要打开个浏览器即可完成，所以前端一般不会扯到“工程”这个概念。
+
+在很长一段时间里，前端很简单，比如下面简单的几行代码就能够成一个可运行前端应用：
 
 ``` xml
 <!DOCTYPE html>
@@ -20,27 +40,11 @@
 </html>
 ```
 
-但随着webapp的复杂程度不断在增加，前端也在变得很庞大和复杂，按照传统的开发方式会让前端失控：代码难以维护、性能不断下降。
+但随着webapp的复杂程度不断在增加，前端也在变得很庞大和复杂，按照传统的开发方式会让前端失控：代码庞大难以维护、性能优化难做、开发成本变高。
 
-广泛意义上讲，前端也属于软件工程的范畴。
+感谢Node.js，使得JavaScript这门前端的主力语言突破了浏览器环境的限制可以独立运行在OS之上，这让JavaScript拥有了文件IO、网络IO的能力，前端可以根据需要任意定制研发辅助工具。
 
-对于软件“工程”，个人以为至少应当有如下特点：
-
-- 有IDE的支持，负责组织代码、debug、编译、打包等工作
-
-- 有固定或者约定的目录结构，规定软件所依赖的不同类别的资源的存放路径
-
-- 在完成软件开发时，对代码的组织甚至写法，有一定的规范或约定，通常由IDE控制
-
-但前端没有Eclipse、Visual Studio等为特定语言量身打造的IDE。因为前端不需要编译，即改即生效，在开发和调试时足够方便，只需要打开个浏览器即可完成，所以前端一般不会扯到“工程”这个概念。
-
-感谢Node.js，使得JavaScript这门前端的主力语言突破了浏览器环境的限制可以独立运行在OS之上，这让JavaScript拥有了文件IO、网络IO的能力。
-
-一时间出现了以Grunt、Gulp为代表的前端构建工具，它把前端开发的各个环节（如代码合并压缩、图片合并压缩、资源路径替换等）包装成一个个独立的task，根据不同的运行环境需要组合装载不同的task。
-
-这个时候“前端工程”这个概念逐渐被强调和重视，在认识到了工具所带来的便利之后，各个前端团队都在尝试对所负责的项目进行工程化改造。
-
-但是构建工具本身有一定的使用门槛，配置过于复杂并且不能够完全解决我们的需求，所以前端工程化很难做，根本原因是前端的复杂性和特殊性。
+一时间出现了以Grunt、Gulp为代表的一批前端构建工具，“前端工程”这个概念逐渐被强调和重视。但是由于前端的复杂性和特殊性，前端工程化一直很难做，构建工具有太多局限性。
 
 诚如 张云龙[@fouber](https://github.com/fouber) 所言：
 
@@ -48,25 +52,23 @@
 
 html、css和js的配合才能保证webapp的运行，增量安装是按需加载的需要。开发完成后输出三种以上不同格式的静态资源，静态资源之间有可能存在互相依赖关系，最终构成一个复杂的资源依赖树（甚至网）。
 
-所以，前端工程化，最起码需要解决以下问题：
+所以，前端工程，最起码需要解决以下问题：
 
 - 提供开发所需的一整套运行环境，这和IDE作用类似
 
-- 资源加载和依赖处理
-
-- 资源的实时更新
-
-- 在上两条的基础上，支持按需加载
+- 资源管理，包括资源获取、依赖处理、实时更新、按需加载、公共模块管理等
 
 - 打通研发链路的各个环节，debug、mock、proxy、test、build、deploy等
 
-注：个人以为，与前端工程化对应的另一个重要的领域是前端组件化和模块化，前者属于工具，解决研发效率问题，后者属于前端生态，解决代码复用的问题，本篇对于后者不做深入。
+其中，资源管理是前端最需要也是最难做的一个环节。
 
-我们以开发一个多页面webapp为例，给出上面所提出的问题的解决方案。
+注：个人以为，与前端工程化对应的另一个重要的领域是前端组件化，前者属于工具，解决研发效率问题，后者属于前端生态，解决代码复用的问题，本篇对于后者不做深入。
 
-### 前端开发环境搭建
+在此以开发一个多页面型webapp为例，给出上面所提出的问题的解决方案。
 
-#### 主要目录结构
+## 前端开发环境搭建
+
+### 主要目录结构
 
 ``` js
 - webapp/               # webapp根目录
@@ -103,7 +105,7 @@ html、css和js的配合才能保证webapp的运行，增量安装是按需加�
 
 这是个经典的前端项目目录结构，项目目结构在一定程度上约定了开发规范。业务开发的同学只需关注`src`目录即可，开发时尽可能最小化模块粒度，这是异步加载的需要。`assets`是整个工程的产出，无需关注里边的内容是什么，至于怎么打包和解决资源依赖的，往下看。
 
-#### 本地开发服务器
+### 本地开发环境
 
 我们使用开源web框架搭建一个webserver，便于本地开发和调试，以及灵活地处理前端路由，以`koa`为例，主要代码如下：
 
@@ -134,7 +136,7 @@ app.listen(3005, '0.0.0.0', function() {
 
 如果只是处理静态资源请求，可以有很多的替代方案，如Fiddler替换文件、本地起Nginx服务器等等。搭建一个Web服务器，它能够非常灵活地配置路由和处理动态请求，可以任意定制开发环境的个性化需求用于提升开发效率，总之local webserver拥有无限的可能。
 
-#### 动态请求支持
+### 定制动态请求
 
 我们的local server是`localhost`域，在ajax请求时为了突破前端同源策略的限制，本地server需支持代理其他域下的api的功能，即proxy。同时还要支持对未完成的api进行mock的功能。
 
@@ -176,9 +178,38 @@ module.exports = function(router, app) {
 }
 ```
 
-### webpack对资源的处理
+## webpack资源管理
 
-#### 资源加载
+### 资源的获取
+
+ECMAScript 6之前，前端的模块化一直没有统一的标准，仅前端包管理系统就有好几个。所以任何一个库实现的loader都不得不去兼容基于多种模块化标准开发的模块。
+
+webpack同时提供了对CommonJS、AMD和ES6模块化标准的支持，对于非前三种标准开发的模块，webpack提供了[shimming modules](http://webpack.github.io/docs/shimming-modules.html)的功能。
+
+受Node.js的影响，越来越多的前端开发者开始采用CommonJS作为模块开发标准，`npm`已经逐渐成为前端模块的托管平台，这大大降低了前后端模块复用的难度。
+
+在webpack配置项里，可以把node_modules路径添加到resolve search root列表里边，这样就可以直接load npm模块了：
+
+``` js
+// webpack.config.js
+resolve: {
+    root: [process.cwd() + '/src', process.cwd() + '/node_modules'],
+    alias: {},
+    extensions: ['', '.js', '.css', '.scss', '.ejs', '.png', '.jpg']
+},
+```
+
+``` bash
+$ npm install jquery react --save
+```
+
+``` js
+// page-x.js
+import $ from 'jquery';
+import React from 'react';
+```
+
+### 资源引用
 
 根据webpack的设计理念，所有资源都是“模块”，webpack内部实现了一套资源加载机制，这与Requirejs、Sea.js、Browserify等实现有所不同，除了借助插件体系加载不同类型的资源文件之外，webpack还对输出结果提供了非常精细的控制能力，开发者只需要根据需要调整参数即可：
 
@@ -240,7 +271,7 @@ require("!style!css!less!bootstrap/less/bootstrap.less");
 
 `require()`时指定的loader会覆盖配置文件里对应的loader配置项。
 
-#### 资源依赖处理
+### 资源依赖处理
 
 通过loader机制，可以不需要做额外的转换即可加载浏览器不直接支持的资源类型，如`.scss`、`.less`、`.json`、`.ejs`等。
 
@@ -322,7 +353,7 @@ webpackJsonp([0], {
 
 对于css文件，默认情况下webpack会把css content内嵌到js里边，运行时会使用`style`标签内联。如果希望将css使用`link`标签引入，可以使用`ExtractTextPlugin`插件进行提取。
 
-#### 资源的编译输出
+### 资源的编译输出
 
 webpack的三个概念：模块（module）、入口文件（entry）、分块（chunk）。
 
@@ -398,7 +429,7 @@ plugins: [
 ],
 ```
 
-#### 资源的动态更新
+### 资源的实时更新
 
 引用模块，webpack提供了`require()`API（也可以通过添加bable插件来支持ES6的`import`语法）。但是在开发阶段不可能改一次编译一次，webpack提供了强大的热更新支持，即[HMR(hot module replace)](http://webpack.github.io/docs/hot-module-replacement-with-webpack.html)。
 
@@ -422,7 +453,7 @@ webpack-dev-server的启动很简单，配置完成之后可以通过cli启动�
 ...
 ```
 
-因为我们的local server就是基于Node.js的webserver，这里可以更进一步，将HMR以中间件的形式集成到local webserver，不需要cli方式启动（少开一个cmd tab）：
+因为我们的local server就是基于Node.js的webserver，这里可以更进一步，将webpack开发服务器以中间件的形式集成到local webserver，不需要cli方式启动（少开一个cmd tab）：
 
 ``` js
 // app.js
@@ -442,7 +473,7 @@ app.use(webpackDevMiddleware(webpack(webpackConf), {
 
 ![HMR build](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/webpack_fe/hmr_build.png)
 
-#### 组件化
+### 公用代码的处理：封装组件
 
 webpack解决了资源依赖的问题，这使得封装组件变得很容易，例如：
 
@@ -467,33 +498,12 @@ import {someMethod} from "./components/component-x";
 someMethod();
 ```
 
-正如开头我们说的，将三种语言、多种资源合并成js来管理，大大降低了维护成本。
+正如开头所说，将三种语言、多种资源合并成js来管理，大大降低了维护成本。
+
+对于新开发的组件或library，建议推送到`npm`仓库进行共享。如果需要支持其他加载方式（如RequireJS或标签直接引入），可以参考webpack提供的[externals](http://webpack.github.io/docs/configuration.html#externals)项。
 
 
-webpack有一个配置项`resolve`，用于解决`require()`API的资源路径查找，可以把node_modules添加到search root列表里边，这样即达到前后端共享npm模块：
-
-``` js
-// webpack.config.js
-resolve: {
-    root: [process.cwd() + '/src', process.cwd() + '/node_modules'],
-    alias: {},
-    extensions: ['', '.js', '.css', '.scss', '.ejs', '.png', '.jpg']
-},
-```
-
-``` bash
-$ npm install jquery react --save
-```
-
-``` js
-// page-x.js
-import $ from 'jquery';
-import React from 'react';
-```
-
-对于依赖的不能被正确resoved的资源，请查阅webpack的[externals](http://webpack.github.io/docs/configuration.html#externals)配置。
-
-#### 项目开发
+### 资源路径切换
 
 由于入口文件是手动使用script引入的，在webpack编译之后入口文件的名称和路径一般会改变，即开发环境和生产环境引用的路径不同：
 
@@ -511,7 +521,7 @@ import React from 'react';
 <script src="http://cdn.site.com/js/e7d20340.a.min.js"></script>
 ```
 
-webpack同样提供了`HtmlWebpackPlugin`插件来解决这个问题，HtmlWebpackPlugin支持从模板生成html文件，生成的html里边可以正确解决js打包之后的路径、文件名问题，配置示例：
+webpack提供了`HtmlWebpackPlugin`插件来解决这个问题，HtmlWebpackPlugin支持从模板生成html文件，生成的html里边可以正确解决js打包之后的路径、文件名问题，配置示例：
 
 ``` js
 // webpack.config.js
@@ -538,15 +548,35 @@ output: {
 其他入口html文件采用类似处理方式。
 
 
-### 综述
+## 辅助工具集成
 
-local server解决了本地开发环境的问题，webpack解决了开发和生产环境资源依赖管理的问题。在实际的开发中，可能会有许多额外的任务需要完成，比如对于使用compass生成sprites的项目，因目前webpack还不直接支持sprites，所以还需要compass watcher，再比如工程的remote deploy等，所以需要使用一些构建工具（如Gulp）的配合，真正打通研发的各个链路。
+local server解决本地开发环境的问题，webpack解决开发和生产环境资源依赖管理的问题。在项目开发中，可能会有许多额外的任务需要完成，比如对于使用compass生成sprites的项目，因目前webpack还不直接支持sprites，所以还需要compass watch，再比如工程的远程部署等，所以需要使用一些构建工具或者脚本的配合，打通研发的链路。
 
-前端的资源依赖管理，使用Grunt、Gulp等构建工具结合插件也能做，但是配置的门槛不低，而且在接触到webpack之前笔者一直没有找到一种比较满意的做法。
+因为每个团队在部署代码、单元测试、自动化测试、发布等方面做法都不同，前端需要遵循公司的标准进行自动化的整合，这部分不深入了。
 
-webpack以一种非常优雅的方式解决了前端资源依赖管理的问题，内部做了很多事情，但是对于使用者而言要达到相同的目的只需要做少量的配置，再结合构建工具，很容易搭建一套前端工程解决方案。
 
-附上笔者根据本篇的理论所完成的一个纯静态页面型前端自动化解决方案模板：
+## 对比&综述
+
+前端工程化的建设，早起的做法是使用Grunt、Gulp等构建工具。但本质上它们只是一个任务调度器，将功能独立的任务拆解出来，按需组合运行任务。如果要完成前端工程化，这两者配置门槛很高，每一个任务都需要开发者自行使用插件解决，而且对于资源的依赖管理能力太弱。
+
+在国内，百度出品的[fis](http://fis.baidu.com/)也是一种不错的工程化工具的选择，fis内部也解决了资源依赖管理的问题。因笔者没有在项目中实践过fis，所以不进行更多的评价。
+
+webpack以一种非常优雅的方式解决了前端资源依赖管理的问题，它在内部已经集成了许多资源依赖处理的细节，但是对于使用者而言只需要做少量的配置，再结合构建工具，很容易搭建一套前端工程解决方案。
+
+基于webpack的前端自动化工具，可以自由组合各种开源技术栈（Koa/Express/其他web框架、webpack、Sass/Less/Stylus、Gulp/Grunt等），没有复杂的资源依赖配置，工程结构也相对简单和灵活。
+
+附上笔者根据本篇的理论所完成的一个前端自动化解决方案项目模板：
 [webpack-bootstrap](https://github.com/chemdemo/webpack-bootstrap)
 
 （完）。
+
+
+## 参考文章
+
+- [http://webpack.github.io/docs/](http://webpack.github.io/docs/)
+
+- [https://github.com/petehunt/webpack-howto](https://github.com/petehunt/webpack-howto)
+
+- [http://christianalfoni.github.io/javascript/2014/12/13/did-you-know-webpack-and-react-is-awesome.html](http://christianalfoni.github.io/javascript/2014/12/13/did-you-know-webpack-and-react-is-awesome.html)
+
+- [https://github.com/webpack/react-starter/blob/master/make-webpack-config.js](https://github.com/webpack/react-starter/blob/master/make-webpack-config.js)
