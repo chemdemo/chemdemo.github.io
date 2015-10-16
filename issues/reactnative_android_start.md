@@ -1,10 +1,10 @@
-# （Mac平台）ReactNative Android开发环境搭建小计
+## （Mac平台）ReactNative Android开发环境搭建小计
 
 目前ReactNative只支持Mac平台，iOS的开发环境比较简单，基本上只需要一个xcode即可。
 
 Android开发环境需要装很多软件，而且问题比较多，本篇记录下。
 
-## 安装软件
+### 安装软件
 
 **Android Studio**
 
@@ -74,7 +74,7 @@ flow是mac平台下一个FTP + SFTP客户端。
 $ brew install flow
 ```
 
-## 初始化app
+### 初始化app
 
 ``` bash
 $ react-native init [appname]
@@ -95,7 +95,7 @@ drwxr-xr-x   4 dmyang  staff   136B  9 18 23:35 node_modules
 -rw-r--r--   1 dmyang  staff   202B  9 18 23:35 package.json
 ```
 
-## 编译app
+### 编译app
 
 对于iOS，比较简单，进入`ios/`目录下，双击`[appname].xcodeproj`文件即可运行。
 
@@ -162,7 +162,7 @@ Total time: 20.947 secs
 经过几番折腾，发现是watchman版本问题，更新下即可：
 
 ``` bash
-brew update && brew upgrade watchman
+$ brew update && brew upgrade watchman
 ```
 
 编译安装好apk之后，就可以在模拟器启动app：
@@ -176,7 +176,7 @@ Android版本是通过`Fn+F2`来刷新，iOS是通过`control+r`来刷新。
 通过以下命令来监听文件的改变以达到实时刷新：
 
 ``` bash
-react-native start
+$ react-native start
 ```
 
 致此，开发环境算是搭建起来的。
