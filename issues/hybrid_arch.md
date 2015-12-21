@@ -208,7 +208,7 @@ JSBridge.ui.toast('Hello world!');
 
 ### 默认界面采用Native
 
-由于H5是在Native容器里进行加载和渲染，所以Native很容易对H5页面的行为进行监控，包括进度条、loading动画、404监控、5xx监控、网络诊断等，并且在H5加载异常时提供默认界面供用户操作，防止APP“假死”。
+由于H5是在H5容器里进行加载和渲染，所以Native很容易对H5页面的行为进行监控，包括进度条、loading动画、404监控、5xx监控、网络诊断等，并且在H5加载异常时提供默认界面供用户操作，防止APP“假死”。
 
 下面是微信的5xx界面示意：
 
@@ -254,9 +254,9 @@ Native除了负责部分界面开发和公共UI组件设计之外，作为H5的r
 
 到目前为止，离线资源更新的问题解决了，剩下的就是如何使用离线资源了。
 
-上面已经提到，对于H5的请求，线上和离线采用相同的url访问，这就需要Native容器对H5的资源请求进行拦截“映射”到本地，暂且将实现这一逻辑的模块成为`Local Url Router`。
+上面已经提到，对于H5的请求，线上和离线采用相同的url访问，这就需要H5容器对H5的资源请求进行拦截“映射”到本地，暂且将实现这一逻辑的模块成为`Local Url Router`。
 
-Local Url Router主要负责H5静态资源请求的分发（线上资源到sd卡资源的映射），但是不管是白名单还是过滤静态文件类型，Native拦截规则和映射规则将变得比较复杂。这里，[阿里去啊app](http://www.infoq.com/cn/presentations/look-the-fusion-of-web-and-native-from-the-architecture-evolution-of-alitrip)的思路就比较赞，我们借鉴一下，将映射规则交给H5去生成：H5开发完成之后会扫描H5项目然后生成一份线上资源和离线资源路径的映射表（souce-router.json），Native容器只需负责解析这个映射表即可。
+Local Url Router主要负责H5静态资源请求的分发（线上资源到sd卡资源的映射），但是不管是白名单还是过滤静态文件类型，Native拦截规则和映射规则将变得比较复杂。这里，[阿里去啊app](http://www.infoq.com/cn/presentations/look-the-fusion-of-web-and-native-from-the-architecture-evolution-of-alitrip)的思路就比较赞，我们借鉴一下，将映射规则交给H5去生成：H5开发完成之后会扫描H5项目然后生成一份线上资源和离线资源路径的映射表（souce-router.json），H5容器只需负责解析这个映射表即可。
 
 H5资源包解压之后在本地的目录结构类似：
 
@@ -287,7 +287,7 @@ souce-router.json的数据结构类似：
 }
 ```
 
-Native容器拦截到静态资源请求时，如果本地有对应的文件则直接读取本地文件返回，否则发起HTTP请求获取线上资源，如果设计完整一点还可以考虑同时开启新线程去下载这个资源到本地，下次就走离线了。
+H5容器拦截到静态资源请求时，如果本地有对应的文件则直接读取本地文件返回，否则发起HTTP请求获取线上资源，如果设计完整一点还可以考虑同时开启新线程去下载这个资源到本地，下次就走离线了。
 
 下图反应了资源在app内部的访问流程图：
 
