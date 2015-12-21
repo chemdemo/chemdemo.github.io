@@ -40,6 +40,7 @@ H5调用Native（以Android为例）示意图：
 ![hybrid jsbridge2](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge_2.png)
 
 Native（以Android为例）调用H5示意图：
+
 ![hybrid jsbridge3](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge_3.png)
 
 
@@ -49,7 +50,7 @@ jsbridge作为一种通用私有协议，一般会在团队级或者公司级产
 
 以下是笔者剥离公司业务代码后抽象出的一份HybridApi的实现，项目地址：
 
-[hybrid-api](#)
+[hybrid](#)
 
 另外，对于Native提供的各种接口，也可以简单封装下，使之更贴近前端工程师的使用习惯：
 
@@ -211,7 +212,7 @@ JSBridge.ui.toast('Hello world!');
 
 下面是微信的5xx界面示意：
 
-![webview 5xx](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/webview_1.png)
+![webview 5xx](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/webview_1.jpg)
 
 ## 设计H5容器
 
