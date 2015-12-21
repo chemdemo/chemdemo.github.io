@@ -102,7 +102,7 @@ JSBridge.util.compassImage('http://cdn.foo.com/images/bar.png', function(r) {
 
 整体架构：
 
-![hybrid jsbridge](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge.png)
+![hybrid jsbridge](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge_arch.png)
 
 但是，在实际的项目中，将整个app所有界面都使用H5来开发也有不妥之处，根据经验，以下情形还是使用Native界面为好：
 
@@ -114,7 +114,7 @@ JSBridge.util.compassImage('http://cdn.foo.com/images/bar.png', function(r) {
 
 另外，H5本身的动画开发成本比较高，在低端机器上可能有些绕不过的性能坎，原生js对于手势的支持也比较弱，因此对于这些类型的界面，可以选择使用Native来实现，这也是Native本身的有时不是。比如要实现下面这个音乐播放界面，用H5开发门槛不小吧，留意下中间的波浪线背景，手指左右滑动可以切换动画。
 
-![layout ui1](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/layout_1.jpg)
+![layout ui1](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/layout_1.png)
 
 ### 导航组件采用Native
 
@@ -158,7 +158,7 @@ JSBridge.layout.setHeader({
 
 上面的接口，可以满足绝大多数的需求，但是还有一些特殊的界面，通过H5代码控制生成导航组件这种方式达不到需求：
 
-![layout ui2](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/layout_2.jpg)
+![layout ui2](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/layout_2.png)
 
 如上图所示，界面含有tab，且可以左右滑动切换，tab标题的下划线会跟着手势左右滑动。大多见于app的首页（mainActivity）或者分频道首页，这种界面一般采用定制webview的做法：定制的导航组件和内容框架（为了支持左右滑动手势），H5打开此类界面一般也是开特殊的API：
 
@@ -212,7 +212,7 @@ JSBridge.ui.toast('Hello world!');
 
 下面是微信的5xx界面示意：
 
-![webview 5xx](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/webview_1.jpg)
+![webview monitor](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/webview-monitor.png)
 
 ## 设计H5容器
 
