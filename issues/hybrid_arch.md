@@ -43,11 +43,13 @@ Native（以Android为例）调用H5示意图：
 ![hybrid jsbridge3](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge_3.png)
 
 
-### 基于桥协议的api设计
+### 基于桥协议的api设计（HybridApi）
 
 jsbridge作为一种通用私有协议，一般会在团队级或者公司级产品进行共享，所以需要和业务层进行解耦，将jsbridge的内部细节进行封装，对外暴露平台级的API。
 
-【code...】
+以下是笔者剥离公司业务代码后抽象出的一份HybridApi的实现，项目地址：
+
+[hybrid-api](#)
 
 另外，对于Native提供的各种接口，也可以简单封装下，使之更贴近前端工程师的使用习惯：
 
@@ -99,7 +101,7 @@ JSBridge.util.compassImage('http://cdn.foo.com/images/bar.png', function(r) {
 
 整体架构：
 
-![hybrid arch1](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/arch_1.png)
+![hybrid jsbridge](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge.png)
 
 但是，在实际的项目中，将整个app所有界面都使用H5来开发也有不妥之处，根据经验，以下情形还是使用Native界面为好：
 
@@ -211,9 +213,107 @@ JSBridge.ui.toast('Hello world!');
 
 ![webview 5xx](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/webview_1.png)
 
-## 开发流程
+## 设计H5容器
 
-## 离线包
+Native除了负责部分界面开发和公共UI组件设计之外，作为H5的runtime，H5容器是hybrid架构的核心部分，为了让H5运行更快速稳定和健壮，还应当提供并但不局限于下面几方面。
 
-http://o2o.meizu.com <=> /sdcard/0/o2o.meizu.com/
-http://cdn.meizu.com <=> /sdcard/0/cdn.meizu.com/
+### H5离线访问
+
+之所以选择hybrid方式来开发，其中一个原因就是要解决webapp访问慢的问题。即使我们的H5性能优化做的再好服务器在牛逼，碰到蜗牛一样的运营商网络你也没辙，有时候还会碰到流氓运营商再给webapp插点广告。。。哎说多了都是泪。
+
+离线访问，顾名思义就是将H5预先放到用户手机，这样访问时就不会再走网络从而做到看起来和Native APP一样的快了。
+
+但是离线机制绝不是把H5打包解压到手机sd卡这么简单粗暴，应该解决以下几个问题：
+
+1. H5应该有线上版本
+
+    作为访问离线资源的降级方案，当本地资源不存在的时候应该走现网去拉取对应资源，保证H5可用。另外就是，对于H5，我们不会把所有页面都使用离线访问，例如活动页面，这类快速上线又快速下线的页面，设计离线访问方式开发周期比较高，也有可能是页面完全是动态的，不同的用户在不同的时间看到的页面不一样，没法落地成静态页面，还有一类就是一些说明类的静态页面，更新频率很小的，也没必要做成离线占用手机存储空间。
+
+2. 开发调试&抓包
+
+    我们知道，基于file协议开发是完全基于开发机的，代码必须存放于物理机器，这意味着修改代码需要push到sd卡再看效果，虽然可以通过假链接访问开发机本地server发布时移除的方式，但是个人觉得还是太麻烦易出错。
+
+为了实现同一资源的线上和离线访问，Native需要对H5的静态资源请求进行拦截判断，将静态资源“映射”到sd卡资源，即实现一个处理H5资源的本地路由，暂且称之为`Local Url Router`，下一节是具体实现。
+
+### H5离线动态更新机制
+
+将H5资源放置到本地离线访问，最大的挑战就是本地资源的动态更新如何设计，这部分可以说是最复杂的了，因为这同时涉及到H5、Native和服务器三方，覆盖式离线更新示意图如下：
+
+![workflow](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/workflow.png)
+
+解释下上图，开发阶段H5代码可以通过HTTP代理方式直接访问开发机。完成开发之后，将H5代码推送到管理平台进行构建、打包，然后管理平台再通过事先设计好的长连接通道将H5新包信息推送给客户端，客户端收到更新指令后开始下载新包、对包进行完整性校验、merge回本地对应的包，更新结束。
+
+其中，管理平台推送给客户端的信息主要包括项目名（包名）、版本号、更新策略（增量or全量）、包CDN地址、MD5等。
+
+通常来说，H5资源分为两种，经常更新的业务代码和不经常更新的框架、库代码和公用组件代码，为了实现离线资源的共享，在H5打包时可以采用分包的策略，将公用部分单独打包，在本地也是单独存放，分包及合并示意图：
+
+![multi package](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/multi-pack.png)
+
+### Local Url Router
+
+到目前为止，离线资源更新的问题解决了，剩下的就是如何使用离线资源了。
+
+上面已经提到，对于H5的请求，线上和离线采用相同的url访问，这就需要Native容器对H5的资源请求进行拦截“映射”到本地，暂且将实现这一逻辑的模块成为`Local Url Router`。
+
+Local Url Router主要负责H5静态资源请求的分发（线上资源到sd卡资源的映射），但是不管是白名单还是过滤静态文件类型，Native拦截规则和映射规则将变得比较复杂。这里，[阿里去啊app](http://www.infoq.com/cn/presentations/look-the-fusion-of-web-and-native-from-the-architecture-evolution-of-alitrip)的思路就比较赞，我们借鉴一下，将映射规则交给H5去生成：H5开发完成之后会扫描H5项目然后生成一份线上资源和离线资源路径的映射表（souce-router.json），Native容器只需负责解析这个映射表即可。
+
+H5资源包解压之后在本地的目录结构类似：
+
+``` bash
+$ cd h5 && tree
+.
+├── js/
+├── css/
+├── img/
+├── pages
+│   ├── index.js
+│   └── list.js
+└── souce-router.json
+```
+
+souce-router.json的数据结构类似：
+
+``` js
+{
+    "protocol": "http",
+    "host": "o2o.xx.com",
+    "localRoot": "[/storage/0/data/h5/o2o/]",
+    "localFolder": "o2o.xx.com",
+    "rules": {
+        "/index.html": "pages/index.html",
+        "/js/": "js/"
+    }
+}
+```
+
+Native容器拦截到静态资源请求时，如果本地有对应的文件则直接读取本地文件返回，否则发起HTTP请求获取线上资源，如果设计完整一点还可以考虑同时开启新线程去下载这个资源到本地，下次就走离线了。
+
+下图反应了资源在app内部的访问流程图：
+
+![url router](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/url-router.png)
+
+其中proxy指的是开发时手机设置代理http代理到开发机。
+
+### 数据通道
+
+- 上报
+
+ 由于界面由H5和Native共同完成，界面上的用户交互埋点数据最好由H5容器统一采集、上报，还有，由页面跳转产生的浏览轨迹（转化漏斗），也由H5容器记录和上报
+
+- ajax代理
+
+ 因ajax受同源策略限制，可以在hybridApi层对ajax进行统一封装，同时兼容H5容器和浏览器runtime，采用更高效的通讯通道加速H5的数据传输
+
+### Native对H5的扩展
+
+主要指扩展H5的硬件接口调用能力，比如屏幕旋转、摄像头、麦克风、位置服务等等，将Native的能力通过接口的形式提供给H5。
+
+## 综述
+
+最后来张图总结下，hybrid客户端整体架构图：
+
+![hybrid architecture](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/architecture.png)
+
+其中的`Synchronize Service`模块表示和服务器的长连接通信模块，用于接受服务器端各种推送，包括离线包等。`Source Merge Service`模块表示对解压后的H5资源进行更新，包括增加文件、以旧换新以及删除过期文件等。
+
+可以看到，hybrid模式的app架构，最核心和最难的部分都是H5容器的设计。
