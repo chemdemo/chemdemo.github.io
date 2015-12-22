@@ -94,21 +94,17 @@ JSBridge.util.compassImage('http://cdn.foo.com/images/bar.png', function(r) {
 
 ## 界面与交互（Native与H5职责划分）
 
-本质上，Native和H5都能完成界面开发。几乎所有hybrid的开发模式都会碰到同样的一个问题：哪些由Native负责哪些由H5负责。
+本质上，Native和H5都能完成界面开发。几乎所有hybrid的开发模式都会碰到同样的一个问题：哪些由Native负责哪些由H5负责？
 
 这个回到原始的问题上来：我们为什么要采用hybrid模式开发？简而言之就是同时利用H5的跨平台、快速迭代能力以及Native的流畅性、系统API调用能力。
 
-根据这个原则，为了充分利用二者的优势，应该尽可能地将app内容使用H5来呈现，而对于js语言本身的缺陷，应该使用Native语言来弥补，如转场动画、多线程作业（密集型任务）、本地存储。即总的原则是H5提供内容，Native提供容器，在有可能的条件下对Android原声webview进行优化和改造，提升H5的渲染效率。
-
-整体架构：
-
-![hybrid jsbridge](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge_arch.png)
+根据这个原则，为了充分利用二者的优势，应该尽可能地将app内容使用H5来呈现，而对于js语言本身的缺陷，应该使用Native语言来弥补，如转场动画、多线程作业（密集型任务）、IO性能等。即总的原则是H5提供内容，Native提供容器，在有可能的条件下对Android原生webview进行优化和改造（参考阿里Hybrid容器的JSM），提升H5的渲染效率。
 
 但是，在实际的项目中，将整个app所有界面都使用H5来开发也有不妥之处，根据经验，以下情形还是使用Native界面为好：
 
 ### 关键界面、交互性强的的界面使用Native
 
-因H5比较容易被恶意攻击，对于安全性要求比较高的界面，如注册界面、登陆、支付等界面，会采用Native来取代H5开发，这些页面通常UI变更的频率也不高。
+因H5比较容易被恶意攻击，对于安全性要求比较高的界面，如注册界面、登陆、支付等界面，会采用Native来取代H5开发，保证数据的安全性，这些页面通常UI变更的频率也不高。
 
 对于这些界面，降级的方案也有，就是HTTPS。但是想说的是在国内的若网络环境下，HTTPS的体验实在是不咋地（主要是慢），而且只能走现网不能走离线通道。
 
@@ -126,7 +122,7 @@ JSBridge.util.compassImage('http://cdn.foo.com/images/bar.png', function(r) {
 
 所以基于这两点，打开的界面都是Native的导航组件+webview来组成，这样即使H5加载失败或者太慢用户可以选择直接关闭。
 
-在API层面，会相应的有一个接口来实现这一逻辑（例如叫`JSBridge.layout.setHeader`），下面代码表示定制一个只有back键和标题的导航组件:
+在API层面，会相应的有一个接口来实现这一逻辑（例如叫`JSBridge.layout.setHeader`），下面代码演示定制一个只有back键和标题的导航组件:
 
 ``` js
 // /h5/pages/index.js
