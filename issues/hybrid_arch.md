@@ -1,6 +1,6 @@
 # Hybrid APP架构设计思路
 
-关于Hybrid开发app的好处，网络上已有很多文章阐述了，这里不展开。
+关于Hybrid模式开发app的好处，网络上已有很多文章阐述了，这里不展开。
 
 本文将从以下几个方面阐述Hybrid app架构设计的一些经验和思考。
 
@@ -29,7 +29,7 @@ P.S：注册私有协议的做法很常见，我们经常遇到的在网页里�
 
 ### 桥协议的具体实现
 
-由于JavaScript语言自身的特殊性（单进程），为了不阻塞主进程并且保证H5调用的有序性，与Native通讯时对于需要获取结果的接口，采用类似于JSONP的设计理念:
+由于JavaScript语言自身的特殊性（单进程），为了不阻塞主进程并且保证H5调用的有序性，与Native通讯时对于需要获取结果的接口（GET类），采用类似于JSONP的设计理念:
 
 ![hybrid jsbridge1](https://raw.githubusercontent.com/chemdemo/chemdemo.github.io/master/img/hybrid/jsbridge_1.png)
 
