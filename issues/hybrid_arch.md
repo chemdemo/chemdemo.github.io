@@ -25,7 +25,7 @@ ifm.src = 'jsbridge://namespace.method?[...args]';
 
 JSBridge即我们通常说的桥协议，基本的通讯原理很简单，接下来就是桥协议具体实现。
 
-P.S：注册私有协议的做法很常见，我们经常遇到的在网页里拉起一个系统app就是采用私有协议实现的。app在安装完成之后会注册私有协议到OS，浏览器发现自身不能是别的协议（http、https、file等）时，会将链接抛给OS，OS会寻找可识别此协议的app并用该app处理链接。比如在网页里以`itunes://`开头的链接是Apple Store的私有协议，点击后可以启动Apple Store并且跳转到相应的界面。国内软件开发商也经常这么做，比如支付宝的私有协议`alipay://`，腾讯的`tencent://`等等。
+P.S：注册私有协议的做法很常见，我们经常遇到的在网页里拉起一个系统app就是采用私有协议实现的。app在安装完成之后会注册私有协议到OS，浏览器发现自身不能识别的协议（http、https、file等）时，会将链接抛给OS，OS会寻找可识别此协议的app并用该app处理链接。比如在网页里以`itunes://`开头的链接是Apple Store的私有协议，点击后可以启动Apple Store并且跳转到相应的界面。国内软件开发商也经常这么做，比如支付宝的私有协议`alipay://`，腾讯的`tencent://`等等。
 
 ### 桥协议的具体实现
 
@@ -48,9 +48,9 @@ Native（以Android为例）调用H5示意图：
 
 jsbridge作为一种通用私有协议，一般会在团队级或者公司级产品进行共享，所以需要和业务层进行解耦，将jsbridge的内部细节进行封装，对外暴露平台级的API。
 
-以下是笔者剥离公司业务代码后抽象出的一份HybridApi的实现，项目地址：
+以下是笔者剥离公司业务代码后抽象出的一份HybridApi js部分的实现，项目地址：
 
-[hybrid](#)
+[hybrid-js](https://github.com/chemdemo/hybrid-js)
 
 另外，对于Native提供的各种接口，也可以简单封装下，使之更贴近前端工程师的使用习惯：
 
