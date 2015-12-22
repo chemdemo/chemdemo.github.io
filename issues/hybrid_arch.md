@@ -263,8 +263,8 @@ $ cd h5 && tree
 ├── css/
 ├── img/
 ├── pages
-│   ├── index.js
-│   └── list.js
+│   ├── index.html
+│   └── list.html
 └── souce-router.json
 ```
 
