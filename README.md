@@ -1,6 +1,6 @@
 ![chemdemo](favicon.png)
 
-**不要fork，请直接star或者follow！！**
+**不要fork，请直接star或者watch！！**
 
 A collection of issues and demos.
 
