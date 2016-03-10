@@ -1,5 +1,7 @@
 ![chemdemo](favicon.png)
 
+**不要fork，请直接star或者follow！！**
+
 A collection of issues and demos.
 
 [Issues list](https://github.com/chemdemo/chemdemo.github.io/issues)
