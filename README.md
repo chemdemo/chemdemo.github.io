@@ -10,8 +10,6 @@ A collection of issues and demos.
 
 About me
 
-- [Blog](http://www.dmfeel.com)
-
 - [Weibo](http://weibo.com/chemdemo)
 
 - [Twitter](https://twitter.com/chemdemo)
