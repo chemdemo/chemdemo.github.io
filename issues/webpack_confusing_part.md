@@ -336,6 +336,22 @@ module: {
 
 ## 9. 加载器（loader）和插件
 
-你可能已经意识到了，Loaders独立工作于文件级别的在bundle生成之前或期间。
+你可能已经意识到了，Loader处理单独的文件级别并且通常作用于包生成之前或生成的过程中。
+
+而插件则是处理包（bundle）或者chunk级别，且通常是bundle生成的最后阶段。一些插件如[commonschunkplugin](https://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin)甚至更直接修改bundle的生成方式。
+
+## 10. 处理文件的扩展名
+
+很多Webpack的配置文件都有一个`resolve`属性，然后就像下面代码所示有一个空字符串的值。空字符串在此是为了resolve一些在import文件时不带文件扩展名的表达式，如`require('./myJSFile')`或者`import myJSFile from './myJSFile'`（译者注：实际就是自动添加后缀，默认是当成js文件来查找路径）
+
+``` js
+{
+ resolve: {
+   extensions: [‘’, ‘.js’, ‘.jsx’]
+ }
+}
+```
+
+就这么多。
 
 
