@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="" />
+    <title>h5 meta-rem demo</title>
+    <style>
+    body {
+        marrin: 0;
+        padding: 0;
+    }
+
+    #box {
+        /* 以iPhone6为例，1rem=75px */
+        width: 2.66666667rem;
+        height: 2.66666667rem;
+        background: #00CFF3;
+    }
+
+    @media screen and (max-width: 321px) {
+        body {
+            font-size: 16px
+        }
+    }
+
+    @media screen and (min-width: 321px) and (max-width:400px) {
+        body {
+            font-size: 17px
+        }
+    }
+
+    @media screen and (min-width: 400px) {
+        body {
+            font-size: 19px
+        }
+    }
+    </style>
+    <script>
+    // @see http://hcysun.me/2015/10/19/%E4%B8%80%E7%AF%87%E7%9C%9F%E6%AD%A3%E6%95%99%E4%BC%9A%E4%BD%A0%E5%BC%80%E5%8F%91%E7%A7%BB%E5%8A%A8%E7%AB%AF%E9%A1%B5%E9%9D%A2%E7%9A%84%E6%96%87%E7%AB%A0-%E4%BA%8C/
+    let scale = 1 / window.devicePixelRatio
+    document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width,initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no')
+    document.documentElement.style.fontSize = document.documentElement.clientWidth / 10 + 'px' // 1rem的px值
+    </script>
+</head>
+
+<body>
+    <div id="box"></div>
+    <p>text....</p>
+</body>
+
+</html>
