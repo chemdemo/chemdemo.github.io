@@ -1,0 +1,456 @@
+/*
+* @Author: dmyang
+* @Date:   2016-08-23 20:12:42
+* @Last Modified by:   dmyang
+* @Last Modified time: 2016-08-24 11:04:30
+*/
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.box {
+    background: url('img/tree-sky.jpg') center no-repeat;
+    background-size: cover;
+    height: 12rem;
+    width: 10.8rem;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.tree {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    width: 8.74rem;
+    height: 8.35rem;
+    margin-left: -4.37rem;
+}
+
+.tree i {
+    position: absolute;
+    display: block;
+    opacity: .95;
+}
+
+.tree .bole {
+    bottom: 0;
+    left: 50%;
+    background: url(img/tree-bole.png) center no-repeat;
+    background-size: cover;
+    width: 6.44rem;
+    height: 6.89rem;
+    margin-left: -3.22rem;
+    opacity: 1;
+}
+
+.tree .leaf {
+    top: 0;
+    left: 50%;
+    background: url(img/tree-leaf.png) center no-repeat;
+    background-size: cover;
+    width: 8.74rem;
+    height: 6.32rem;
+    margin-left: -4.37rem;
+    opacity: 1;
+}
+
+.tree .bird-left {
+    top: 1.6rem;
+    left: -0.6rem;
+    background: url(img/tree-bird-left.png) center no-repeat;
+    background-size: cover;
+    width: 1.06rem;
+    height: 1.24rem;
+    opacity: 1;
+}
+
+.tree .bird-right {
+    top: 0.3rem;
+    left: 8rem;
+    background: url(img/tree-bird-right.png) center no-repeat;
+    background-size: cover;
+    width: 1.11rem;
+    height: 1.24rem;
+    opacity: 1;
+}
+
+.tree .phone1 {
+    top: 0.95rem;
+    left: 3.4rem;
+    background: url(img/tree-phone1.png) center no-repeat;
+    background-size: cover;
+    width: 1.03rem;
+    height: 1.23rem;
+}
+
+.tree .phone2 {
+    top: 2rem;
+    left: 6.1rem;
+    background: url(img/tree-phone2.png) center no-repeat;
+    background-size: cover;
+    width: 0.98rem;
+    height: 1.18rem;
+}
+
+.tree .dor1000 {
+    top: 3.05rem;
+    left: 2.95rem;
+    background: url(img/tree-1000.png?__inline) center no-repeat;
+    background-size: cover;
+    width: 1.34rem;
+    height: 0.72rem;
+}
+
+.tree .dor1 {
+    top: 4.4rem;
+    left: 6.5rem;
+    background: url(img/tree-1.png?__inline) center no-repeat;
+    background-size: cover;
+    width: 1.21rem;
+    height: 0.65rem;
+}
+
+.tree .jd500 {
+    top: 4.4rem;
+    left: 0.4rem;
+    background: url(img/tree-jd500.png) center no-repeat;
+    background-size: cover;
+    width: 1.29rem;
+    height: 0.89rem;
+}
+
+.tree .headset {
+    display: none;
+    top: 4.75rem;
+    left: 4.25rem;
+    background: url(img/tree-headset.png) center no-repeat;
+    background-size: cover;
+    width: 1.08rem;
+    height: 1.21rem;
+}
+
+.tree .leaf0 {
+    top: 3.9rem;
+    left: -0.12rem;
+    background: url(img/tree-leaf0.png) center no-repeat;
+    background-size: cover;
+    width: 2.07rem;
+    height: 0.94rem;
+}
+
+.tree .leaf1 {
+    top: 0.28rem;
+    left: 2.74rem;
+    background: url(img/tree-leaf1.png) center no-repeat;
+    background-size: cover;
+    width: 2.53rem;
+    height: 0.91rem;
+}
+
+.tree .leaf2 {
+    top: 1.4rem;
+    left: 5.3rem;
+    background: url(img/tree-leaf2.png) center no-repeat;
+    background-size: cover;
+    width: 2.51rem;
+    height: 0.93rem;
+}
+
+.tree .leaf3 {
+    top: 2.57rem;
+    left: 2.56rem;
+    background: url(img/tree-leaf3.png) center no-repeat;
+    background-size: cover;
+    width: 2.37rem;
+    height: 0.82rem;
+}
+
+.tree .leaf4 {
+    top: 3.82rem;
+    left: 5.95rem;
+    background: url(img/tree-leaf4.png) center no-repeat;
+    background-size: cover;
+    width: 2.54rem;
+    height: 0.87rem;
+}
+
+.tree .leaf5 {
+    top: 4.13rem;
+    left: 3.2rem;
+    background: url(img/tree-leaf5.png) center no-repeat;
+    background-size: cover;
+    width: 2.64rem;
+    height: 1.03rem;
+}
+
+.tree .leaf-anim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.tree .leaf-anim i:nth-child(3n) {
+    background: url(img/leaf-0.png) center no-repeat;
+    background-size: cover;
+}
+
+.tree .leaf-anim i:nth-child(3n-1) {
+    background: url(img/leaf-1.png) center no-repeat;
+    background-size: cover;
+}
+
+.tree .leaf-anim i:nth-child(3n+1) {
+    background: url(img/leaf-2.png) center no-repeat;
+    background-size: cover;
+}
+
+.tree .leaf-anim i {
+    width: 1.21rem;
+    height: 1.16rem;
+    transform: scale(0.3);
+}
+
+.tree.play i {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.tree.play .bole {
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-name: vacillate;
+    animation-name: vacillate;
+    -webkit-transform-origin: center bottom;
+    transform-origin: center bottom;
+}
+
+.tree.play .leaf,
+.tree.play .leaf0,
+.tree.play .leaf1,
+.tree.play .leaf2,
+.tree.play .leaf3,
+.tree.play .leaf4,
+.tree.play .leaf5 {
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+    -webkit-animation-name: shake;
+    animation-name: shake;
+}
+
+.tree.play .bird-left {
+    -webkit-animation-name: fly-left;
+    animation-name: fly-left;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+}
+
+.tree.play .bird-right {
+    -webkit-animation-name: fly-right;
+    animation-name: fly-right;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+}
+
+.tree.play .phone1,
+.tree.play .phone2,
+.tree.play .dor1000,
+.tree.play .dor1,
+.tree.play .jd500,
+.tree.play .headset {
+    -webkit-animation-name: swing;
+    animation-name: swing;
+    -webkit-transform-origin: top center;
+    transform-origin: top center;
+}
+
+.tree.play .leaf-anim i {
+    -webkit-transition: -webkit-transform 1.5s linear, opacity 1.2s linear 0.3s;
+    transition: transform 1.5s linear, opacity 1.2s linear 0.3s;
+}
+
+.tree.play .leaf-anim i:nth-child(3n) {
+    -webkit-transform: scale(0.3) -webkit-translateY(15rem);
+    transform: scale(0.3) translateY(15rem);
+    opacity: 0;
+}
+
+.tree.play .leaf-anim i:nth-child(3n-1) {
+    -webkit-transform: scale(0.3) -webkit-translateY(15.5rem);
+    transform: scale(0.3) translateY(15.5rem);
+    opacity: 0;
+}
+
+.tree.play .leaf-anim i:nth-child(3n+1) {
+    -webkit-transform: scale(0.3) -webkit-translateY(14.5rem);
+    transform: scale(0.3) translateY(14.5rem);
+    opacity: 0;
+}
+
+@-webkit-keyframes fly-left {
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    40% {
+        -webkit-transform: translate3d(-10px, 0, 0);
+        transform: translate3d(-10px, 0, 0);
+    }
+}
+
+@keyframes fly-left {
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    40% {
+        -webkit-transform: translate3d(-10px, 0, 0);
+        transform: translate3d(-10px, 0, 0);
+    }
+}
+
+@-webkit-keyframes fly-right {
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    40% {
+        -webkit-transform: translate3d(-5px, 0, 0);
+        transform: translate3d(-5px, 0, 0);
+    }
+}
+
+@keyframes fly-right {
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    40% {
+        -webkit-transform: translate3d(-5px, 0, 0);
+        transform: translate3d(-5px, 0, 0);
+    }
+}
+
+@keyframes vacillate {
+    from,
+    to {
+        -webkit-transform: rotate3d(0, 0, 0, 0);
+        transform: rotate3d(0, 0, 0, 0);
+    }
+    30% {
+        -webkit-transform: rotate3d(0, 0, 1, -2deg);
+        transform: rotate3d(0, 0, 1, -2deg);
+    }
+    60% {
+        -webkit-transform: rotate3d(0, 0, 1, 2deg);
+        transform: rotate3d(0, 0, 1, 2deg);
+    }
+}
+
+@-webkit-keyframes shake {
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        -webkit-transform: translate3d(-5px, 0, 0);
+        transform: translate3d(-5px, 0, 0);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+        -webkit-transform: translate3d(5px, 0, 0);
+        transform: translate3d(5px, 0, 0);
+    }
+}
+
+@keyframes shake {
+    from,
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        -webkit-transform: translate3d(-5px, 0, 0);
+        transform: translate3d(-5px, 0, 0);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+        -webkit-transform: translate3d(5px, 0, 0);
+        transform: translate3d(5px, 0, 0);
+    }
+}
+
+@-webkit-keyframes swing {
+    20% {
+        -webkit-transform: rotate3d(0, 0, 1, 15deg);
+        transform: rotate3d(0, 0, 1, 15deg);
+    }
+    40% {
+        -webkit-transform: rotate3d(0, 0, 1, -10deg);
+        transform: rotate3d(0, 0, 1, -10deg);
+    }
+    60% {
+        -webkit-transform: rotate3d(0, 0, 1, 5deg);
+        transform: rotate3d(0, 0, 1, 5deg);
+    }
+    80% {
+        -webkit-transform: rotate3d(0, 0, 1, -5deg);
+        transform: rotate3d(0, 0, 1, -5deg);
+    }
+    to {
+        -webkit-transform: rotate3d(0, 0, 1, 0deg);
+        transform: rotate3d(0, 0, 1, 0deg);
+    }
+}
+
+@keyframes swing {
+    20% {
+        -webkit-transform: rotate3d(0, 0, 1, 15deg);
+        transform: rotate3d(0, 0, 1, 15deg);
+    }
+    40% {
+        -webkit-transform: rotate3d(0, 0, 1, -10deg);
+        transform: rotate3d(0, 0, 1, -10deg);
+    }
+    60% {
+        -webkit-transform: rotate3d(0, 0, 1, 5deg);
+        transform: rotate3d(0, 0, 1, 5deg);
+    }
+    80% {
+        -webkit-transform: rotate3d(0, 0, 1, -5deg);
+        transform: rotate3d(0, 0, 1, -5deg);
+    }
+    to {
+        -webkit-transform: rotate3d(0, 0, 1, 0deg);
+        transform: rotate3d(0, 0, 1, 0deg);
+    }
+}

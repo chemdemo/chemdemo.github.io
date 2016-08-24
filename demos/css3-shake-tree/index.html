@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-ui-width=1080>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>css3 shake tree demo</title>
+    <script>
+        ;(function() {
+            var html = document.documentElement
+            var uiWidth = html.getAttribute('data-ui-width') >> 0 // UI视觉稿的宽度（px）, 1080px=360dp=10.8rem
+            var fontSize = window.FontSize = html.clientWidth / (uiWidth / 100)
+
+            html.style.fontSize = fontSize + 'px'
+        })()
+    </script>
+    <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+    <section class="box">
+        <div id="tree" class="tree anim-box">
+            <i class="bole"></i>
+            <i class="leaf"></i>
+            <i class="bird-left"></i>
+            <i class="bird-right"></i>
+            <div class="leaf-anim">
+            <script>
+                // gen leaf ramdom
+                (function() {
+                    var s = ''
+                    for(var i=0; i<= 50; i++) {
+                        var t = Math.max(30, Math.random()*550*FontSize/100).toFixed(3)
+                        var l = Math.max(30, Math.random()*700*FontSize/100).toFixed(3)
+                        s += '<i style="top: '+t+'px; left: '+l+'px" class="leaf-'+i+'"></i>'
+                    }
+                    document.write(s)
+                }())
+            </script>
+            </div>
+            <i class="phone1"></i>
+            <i class="phone2"></i>
+            <i class="dor1000"></i>
+            <i class="dor1"></i>
+            <i class="jd500"></i>
+            <i class="headset"></i>
+            <i class="leaf0"></i>
+            <i class="leaf1"></i>
+            <i class="leaf2"></i>
+            <i class="leaf3"></i>
+            <i class="leaf4"></i>
+            <i class="leaf5"></i>
+        </div>
+    </section>
+    <p style="text-align: center;"><button id="ctrl">shake</button></p>
+</body>
+
+<script>
+    onload = function() {
+        var tree = document.querySelector('#tree')
+        var btn = document.querySelector('#ctrl')
+
+        btn.addEventListener('click', function shake(e) {
+            if(!tree.classList.contains('play')) {
+                tree.classList.add('play')
+                setTimeout(function() {
+                    tree.classList.remove('play')
+                }, 1500)
+            }
+        })
+    }
+</script>
+
+</html>
