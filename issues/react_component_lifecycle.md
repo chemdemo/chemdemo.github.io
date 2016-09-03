@@ -191,4 +191,115 @@ var Container = React.createClass({
 
 ##　更新阶段
 
+当组件的属性或者状态更新时也需要一些方法来供我们执行代码，这些方法也是组件更新阶段的一部分且按照以下的顺序被调用：
 
+1. 当从父组件接收到新的属性时：
+
+![props updated](https://cdn-images-1.medium.com/max/800/1*5fwo0VC1KtiWH64CENQ8dQ.png)
+
+2. 当通过`this.setState()`改变状态时：
+
+![state updated](https://cdn-images-1.medium.com/max/800/1*u0CoE_GHlUB4Ce-yZtgv0Q.png)
+
+此阶段React组件已经被插入DOM了，因此这些方法将不会在首次render时被调用。
+
+最先被调用的方法是`componentWillReceiveProps()`，当组件接收到新属性时被调用。我们可以利用此方法为React组件提供一个在render之前修改state的机会。**在此方法内调用`this.setState()`将不会导致重复render**，然后可以通过`this.props`访问旧的属性。例如计数器组件，如果我们想要在任何时候父组件传入“initialCount”时更新状态，可以这样做：
+
+``` js
+...
+componentWillReceiveProps: function(newProps) {
+    this.setState({count: newProps.initialCount});
+},
+...
+```
+
+`shouldComponentUpdate()`方法允许我们自行决定下一个state更新时是否触发重复render。此方法返回一个布尔值，且默认是true。但是我们也可以返回false，这样下面的（生命周期）方法将不会被调用：
+
+- componentWillUpdate()
+
+- render()
+
+- componentDidUpdate()
+
+当有性能瓶颈时也可以使用`shouldComponentUpdate()`方法（来优化）。尤其是数百个组件一起时重新render的代价将会十分昂贵。为了证明这个猜想我们来看一个例子：
+
+``` js
+var TextComponent = React.createClass({
+    shouldComponentUpdate: function(nextProps, nextState) {
+        if (this.props.text === nextProps.text) return false;
+        return true;
+    },
+
+    render: function() {
+        return <textarea value={this.props.text} />;
+    }
+});
+```
+
+此例中无论何时父组件传入一个“text”属性到`TextComponent`并且text属性等于当前的“text”属性时，组件将会不会重复render。
+
+当接收到新的属性或者state时在render之前会立刻调用`componentWillUpdate()`方法。可以利用此时机来为更新做一些准备工作，虽然这个阶段不能调用`this.setState()`方法：
+
+``` js
+...
+componentWillUpdate: function(nextProps, nextState) {
+    console.log('componentWillUpdate', nextProps, nextState);
+},
+...
+```
+
+`componentDidUpdate()`方法在React更新DOM之后立刻被调用。可以在此方法里操作被更新过的DOM或者执行一些后置动作（action）。此方法有两个参数：
+
+1. prevProps：旧的属性
+
+2. prevState：旧的state
+
+这个方法的一个常见使用场景是当我们使用需要操作更新后的DOM才能工作的第三方库——如jQuery插件的时候。在`componentDidMount()`方法内初始化第三方库，但是在属性或state更新触发DOM更新之后也需要同步更新第三方库来保持接口一致，这些必须在`componentDidUpdate()`方法内来完成。为了验证这一点，让我们看看如何开发一个[Select2库](https://select2.github.io/)包裹（wrapper）React组件：
+
+``` js
+var Select2 = React.createClass({
+    componentDidMount: function() {
+        $(this._ref).select2({data: this.props.items});
+    },
+
+    render: function() {
+        return (
+            <select
+                ref={
+                    function(input) {
+                        this._ref = input;
+                    }.bind(this)
+                }>
+            </select>
+        );
+    },
+
+    componentDidUpdate: function() {
+        $(this._ref).select2('destroy');
+        $(this._ref).select2({data: this.props.items});
+    }
+});
+```
+
+
+## 卸载阶段（unmounting）
+
+此阶段React值提供了一个方法：
+
+- componentWillUnmount()
+
+它将在组件从DOM卸载之前被调用。可以在内部执行任何可能需要的清理工作，如无效的计数器或者清理一些在`componentDidMount()`/`componentDidUpdate()`内创建的DOM。比如在Select2组件里边我们可以这样子：
+
+``` js
+...
+componetWillUnmount: function(){
+   $(this._ref).select2('destroy');
+},
+...
+```
+
+## 概述
+
+React为我们提供了一种在创建组件时申明一些将会在组件生命周期的特定时机被自动调用的方法的可能。现在我们很清晰的理解了每一个组件生命周期方法所扮演的角色以及他们被调用的顺序。这使我们有机会在组件创建和销毁时执行一些操作。这也允许我们在当属性和状态变化时做出相应的反应从而更容易的整合第三方库和追踪性能问题。
+
+希望您觉得此文对您有用，如果是这样，请推荐之！！！
