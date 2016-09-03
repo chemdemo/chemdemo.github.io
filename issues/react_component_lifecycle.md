@@ -8,17 +8,17 @@
 
 稍微思考一下React组件所做的事，首先想到的是一点是：React描述了如何去渲染（DOM）。我们已经知道React使用`render()`方法来达到这个目的。然而仅有`render()`方法可能不一定都能满足我们的需求。如果在组件rendered之前或之后我们需要做些额外的事情该怎么做呢？我们需要做些什么以避免重复渲染(re-render)呢？
 
-看起来我们需要对组件（运行）的各个阶段进行控制，组件运行所有涉及的各个阶段叫做React的生命周期，并且每一个React组件都有这些阶段。React提供了一些方法并在组件处于相应的阶段时通知我们。这些方法叫做React组件的生命周期方法且会根据特定并可预测的顺序被调用。
+看起来我们需要对组件（运行）的各个阶段进行控制，组件运行所有涉及的各个阶段叫做**组件的生命周期**，并且每一个React组件都会经历这些阶段。React提供了一些方法并在组件处于相应的阶段时通知我们。这些方法叫做React**组件的生命周期方法**且会根据特定并可预测的顺序被调用。
 
-基本上所有的React组件的生命周期方法都可以被分割成四个阶段：初始化、挂载阶段（mounting）、更新阶段、卸载阶段（unmounting）。让我们来近距离分别研究下各个阶段。
+基本上所有的React组件的生命周期方法都可以被分割成四个阶段：**初始化**、**挂载阶段（mounting）**、**更新阶段**、**卸载阶段（unmounting）**。让我们来近距离分别研究下各个阶段。
 
 ## 初始化阶段
 
 初始化阶段就是我们分别通过`getDefaultProps()`和`getInitialState()`方法定义`this.props`默认值和`this.state`初始值的阶段。
 
-`getDefaultProps()`方法被*调用一次并缓存*起来——在多个类实例之间共享。在组件的任何实例被创建之前，我们（的代码逻辑）不能依赖这里的`this.props`。这个方法返回一个对象并且属性如果没有通过父组件传入的话相应的属性会挂载到`this.props`对象上。
+`getDefaultProps()`方法被**调用一次并缓存**起来——在多个类实例之间共享。在组件的任何实例被创建之前，我们（的代码逻辑）不能依赖这里的`this.props`。这个方法返回一个对象并且属性如果没有通过父组件传入的话相应的属性会挂载到`this.props`对象上。
 
-`getInitialState()`方法也只会被调用一次，（调用时机）刚好是mounting阶段开始之前。返回值将会被当成`this.state`的初始值，且必须是一个对象。
+`getInitialState()`方法也只会被调用一次，（调用时机）刚好是**mounting阶段开始之前**。返回值将会被当成`this.state`的初始值，且必须是一个对象。
 
 现在我们来证明上面的猜想，实现一个显示的值可以被增加和减少的组件，基本上就是一个拥有“+”和“-”按钮的计数器。
 
@@ -135,7 +135,7 @@ ReactDOM.render(
 
 Mounting阶段发生在组件即将被插入到DOM之前。这个阶段有两个方法可以用：`componentWillMount()`和`componentDidMount()`。
 
-`componentWillMount()`方法是这个阶段最先调用的，它只在刚好初始渲染（initial rendering）发生之前被调用一次，也就是React在DOM插入组件之前。需要注意的是在此方法调用`this.setState()`方法将不会触发重复渲染（re-render）。如果添加下面的代码到计数器组件我们将会看到此方法在`getInitialState()`之后且`render()`之前被调用。
+`componentWillMount()`方法是这个阶段最先调用的，它只在**刚好初始渲染（initial rendering）发生之前**被调用**一次**，也就是React在DOM插入组件之前。需要注意的是在此处**调用`this.setState()`方法将不会触发重复渲染（re-render）**。如果添加下面的代码到计数器组件我们将会看到此方法在`getInitialState()`之后且`render()`之前被调用。
 
 ``` js
 getInitialState: function() {...},
@@ -144,7 +144,7 @@ componentWillMount: function() {
 },
 ```
 
-`componentDidMount()`是这个阶段第二个被调用的方法，刚好发生在在React在DOM插入组件之后，且也只被调用一次。现在可以更新DOM元素了，这意味着这个方法是初始化其他需要访问DOM或操作数据的第三方库的最佳时机。
+`componentDidMount()`是这个阶段第二个被调用的方法，刚好发生在**React插入组件到DOM之后**，且也只被调用**一次**。现在可以更新DOM元素了，这意味着这个方法是初始化其他需要访问DOM或操作数据的第三方库的最佳时机。
 
 假设我们想要通过API拉取数据来初始化组件。我们应该直接在计数器组件的`componentDidMount()`方法拉取数据，但是这让组件看起来有太多逻辑了，更可取的方案是使用[容器组件](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0#.pqy4fd1c5)来做：
 
@@ -191,15 +191,15 @@ var Container = React.createClass({
 
 ##　更新阶段
 
-当组件的属性或者状态更新时也需要一些方法来供我们执行代码，这些方法也是组件更新阶段的一部分且按照以下的顺序被调用：
+**当组件的属性或者状态更新时**也需要一些方法来供我们执行代码，这些方法也是组件更新阶段的一部分且按照以下的顺序被调用：
 
 1. 当从父组件接收到新的属性时：
 
-![props updated](https://cdn-images-1.medium.com/max/800/1*5fwo0VC1KtiWH64CENQ8dQ.png)
+    ![props updated](https://cdn-images-1.medium.com/max/800/1*5fwo0VC1KtiWH64CENQ8dQ.png)
 
 2. 当通过`this.setState()`改变状态时：
 
-![state updated](https://cdn-images-1.medium.com/max/800/1*u0CoE_GHlUB4Ce-yZtgv0Q.png)
+    ![state updated](https://cdn-images-1.medium.com/max/800/1*u0CoE_GHlUB4Ce-yZtgv0Q.png)
 
 此阶段React组件已经被插入DOM了，因此这些方法将不会在首次render时被调用。
 
@@ -284,7 +284,7 @@ var Select2 = React.createClass({
 
 ## 卸载阶段（unmounting）
 
-此阶段React值提供了一个方法：
+此阶段React只提供了一个方法：
 
 - componentWillUnmount()
 
@@ -300,6 +300,6 @@ componetWillUnmount: function(){
 
 ## 概述
 
-React为我们提供了一种在创建组件时申明一些将会在组件生命周期的特定时机被自动调用的方法的可能。现在我们很清晰的理解了每一个组件生命周期方法所扮演的角色以及他们被调用的顺序。这使我们有机会在组件创建和销毁时执行一些操作。这也允许我们在当属性和状态变化时做出相应的反应从而更容易的整合第三方库和追踪性能问题。
+React为我们提供了一种在创建组件时申明一些将会在组件生命周期的特定时机被自动调用的方法的可能。现在我们很清晰的理解了每一个组件生命周期方法所扮演的角色以及他们被调用的顺序。这使我们有机会在组件创建和销毁时执行一些操作。也允许我们在当属性和状态变化时做出相应的反应从而更容易的整合第三方库和追踪性能问题。
 
 希望您觉得此文对您有用，如果是这样，请推荐之！！！
