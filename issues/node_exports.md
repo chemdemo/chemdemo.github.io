@@ -2,7 +2,7 @@
 
 *折腾Node.js有些日子了，下面将陆陆续续记录下使用Node.js的一些细节。*
 
-熟悉Node.js的童鞋都知道，Node.js作为服务器端的javascript运行环境，它使用npm作为通用的包管理工具，npm遵循CommonJS规范定义了一套用于Node.js模块的约定，关于npm实现Node.js模块的更多细节请细读 @朴灵 的[深入Node.js的模块机制](http://www.infoq.com/cn/articles/Node.js-module-mechanism)，这里简单讲下书写Node.js代码时`module.exports`与`exorts`的区别。
+熟悉Node.js的童鞋都知道，Node.js作为服务器端的javascript运行环境，它使用npm作为通用的包管理工具，npm遵循CommonJS规范定义了一套用于Node.js模块的约定，关于npm实现Node.js模块的更多细节请细读[深入Node.js的模块机制](http://www.infoq.com/cn/articles/Node.js-module-mechanism)，这里简单讲下书写Node.js代码时`module.exports`与`exorts`的区别。
 
 在浏览器端js里面，为了解决各模块变量冲突等问题，往往借助于js的闭包把所有模块相关的代码都包装在一个匿名函数里。而Node.js编写模块相当的自由，开发者只需要关注`require`，`exports`，`module`等几个变量就足够，而为了保持模块的可读性，很推荐把不同功能的代码块都写成独立模块，减少各模块耦合。开发者可以在“全局”环境下任意使用`var`申明变量（不用写到闭包里了），通过`exports`暴露接口给调用者。
 
