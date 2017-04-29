@@ -85,12 +85,12 @@ function broadcast(msg, workerId) {
     return
   }
 
-  var webWorkers = getAllWebWorkers('web')
+  var webWorkers = getWorkers('web')
 
   for(var i=0; i<webWorkers.length; i++) webWorkers[i].send(msg)
 }
 
-function getAllWebWorkers(type) {
+function getWorkers(type) {
   var arr = []
 
   for(var id in cluster.workers) {
