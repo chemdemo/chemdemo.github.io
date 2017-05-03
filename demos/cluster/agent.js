@@ -8,7 +8,7 @@ process.on('message', function(msg) {
       case 'load:conf':
         conf.load(function(err, conf) {
           if(err) process.send({action: 'load:conf:fail', from: 'agent', conf: conf})
-          else process.send({action: 'load:conf:succ', from: 'agent', conf: conf})
+          else process.send({action: 'load:conf:succ', from: 'agent', conf: conf, fromWrokerId: msg.fromWrokerId})
         })
         break
 

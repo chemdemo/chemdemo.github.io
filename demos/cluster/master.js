@@ -9,12 +9,19 @@ if(cluster.isMaster) {
 
   cluster.on('online', function(worker) {
     console.log('launch worker id:%d succ', worker.id)
-    if(++c == len + 1) agentWorker.send({from: 'master', action: 'load:conf'})
+    if(!worker._isRestarted) {
+      if(++c == len + 1) agentWorker.send({from: 'master', action: 'load:conf'})
+    } else {
+      // 二次fork的进程
+      fetchWorker.send({from: 'master', action: 'conf:fetch', fromWrokerId: worker.id})
+    }
   })
 
   cluster.on('exit', function(worker) {
     console.log('worker id:%d died', worker.id)
-    worker._type == 'agent' ? startAgentWorker() : startWebWorker()
+    var worker = worker._type == 'agent' ? startAgentWorker() : startWebWorker()
+    // 标识这个worker是二次fork的
+    if(worker._type === 'web') worker._isRestarted = true
   })
 
   cluster.on('message', function(worker, msg, handle) {
@@ -25,7 +32,7 @@ if(cluster.isMaster) {
 
     switch(action) {
       case 'load:conf:succ':
-        if(from === 'agent' && msg.conf) broadcast(msg)
+        if(from === 'agent' && msg.conf) broadcast({action: action, conf: msg.conf}, msg.fromWrokerId)
         break
 
       case 'load:conf:fail':
