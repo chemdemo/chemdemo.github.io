@@ -1,89 +1,105 @@
 'use strict';
 
-var cluster = require('cluster')
-var len = require('os').cpus().length
+const cluster = require('cluster')
+const cp = require('child_process')
+const path = require('path')
+const len = require('os').cpus().length
+
+let agentWorker
 
 if(cluster.isMaster) {
-  var c = 0
-  var agentWorker
+  let c = 0
 
-  cluster.on('online', function(worker) {
-    console.log('launch worker id:%d succ', worker.id)
+  cluster.on('online', worker => {
+    console.log('[master] launch webWorker id:%d succ', worker.id)
     if(!worker._isRestarted) {
-      if(++c == len + 1) agentWorker.send({from: 'master', action: 'load:conf'})
+      if(++c == len) agentWorker.send({action: 'load:conf'})
     } else {
       // 二次fork的进程
-      fetchWorker.send({from: 'master', action: 'conf:fetch', fromWrokerId: worker.id})
+      agentWorker.send({action: 'load:conf', fromId: worker.id})
     }
   })
 
-  cluster.on('exit', function(worker) {
-    console.log('worker id:%d died', worker.id)
-    var worker = worker._type == 'agent' ? startAgentWorker() : startWebWorker()
+  cluster.on('exit', worker => {
+    console.log('[master] webWorker id:%d died', worker.id)
+    let nWorker = startWebWorker()
     // 标识这个worker是二次fork的
-    if(worker._type === 'web') worker._isRestarted = true
+    nWorker._isRestarted = true
   })
 
-  cluster.on('message', function(worker, msg, handle) {
-    console.log('master received msg:', JSON.stringify(msg))
-
-    var from = msg.from
-    var action = msg.action
-
-    switch(action) {
-      case 'load:conf:succ':
-        if(from === 'agent' && msg.conf) broadcast({action: action, conf: msg.conf}, msg.fromWrokerId)
-        break
-
-      case 'load:conf:fail':
-        process.exit()
-        break
-
-      case 'update:conf':
-      case 'retry:conf':
-        if(from === 'web') {
-          msg.fromId = worker.id
-          agentWorker.send(msg)
-        }
-        break
-
-      case 'retry:conf:succ':
-      case 'update:conf:succ':
-        if(from === 'agent' && msg.conf) broadcast(msg)
-        break
-
-      case 'retry:conf:fail':
-      case 'update:conf:fail':
-        if(from === 'agent' && msg.fromId != undefined) broadcast(msg, msg.fromId)
-        break
-
-      default: break
-    }
-  })
+  cluster.on('message', webWorkerMsgHandler)
 
   agentWorker = startAgentWorker()
 
-  for(var i=0; i<len; i++) startWebWorker()
+  for(let i=0; i<len; i++) startWebWorker()
 }
 
 function startWebWorker() {
-  cluster.setupMaster({ exec: 'web.js' })
+  cluster.setupMaster({ exec: path.resolve('./web.js') })
 
-  var worker = cluster.fork()
-
-  worker._type = 'web'
+  let worker = cluster.fork()
 
   return worker
 }
 
 function startAgentWorker() {
-  cluster.setupMaster({ exec: 'agent.js' })
+  let worker = cp.fork(path.resolve('./agent.js'))
 
-  var worker = cluster.fork()
+  worker.on('message', agentMessageHandler)
+  worker.on('exit', () => {
+    console.log('[master] agentWorker died')
+    agentWorker = startAgentWorker()
+  })
 
-  worker._type = 'agent'
+  console.log(`[master] launch agentWorker succ`)
 
   return worker
+}
+
+function webWorkerMsgHandler(worker, msg) {
+  console.log(`[master] received from web, msg ${JSON.stringify(msg)}`)
+
+  let { action } = msg
+
+  switch(action) {
+    case 'update:conf':
+    case 'retry:conf':
+      msg.fromId = worker.id
+      agentWorker.send(msg)
+      break
+
+    default: break
+  }
+}
+
+function agentMessageHandler(msg) {
+  console.log(`[master] received from agent, msg ${JSON.stringify(msg)}`)
+
+  let { action } = msg
+
+  switch(action) {
+    case 'load:conf:succ':
+      if(msg.conf) broadcast({action: action, conf: msg.conf}, msg.fromId)
+      break
+
+    case 'load:conf:fail':
+      // 拉取不到配置信息，直接杀死进程，让进程管理器去重启
+      console.error('[master]', msg.error)
+      process.exit()
+      break
+
+    case 'retry:conf:succ':
+    case 'update:conf:succ':
+      if(msg.conf) broadcast(msg)
+      break
+
+    case 'retry:conf:fail':
+    case 'update:conf:fail':
+      if(msg.fromId != undefined) broadcast(msg, msg.fromId)
+      break
+
+    default: break
+  }
 }
 
 function broadcast(msg, workerId) {
@@ -92,17 +108,17 @@ function broadcast(msg, workerId) {
     return
   }
 
-  var webWorkers = getWorkers('web')
+  let webWorkers = getWorkers()
 
-  for(var i=0; i<webWorkers.length; i++) webWorkers[i].send(msg)
+  for(let i=0; i<webWorkers.length; i++) webWorkers[i].send(msg)
 }
 
-function getWorkers(type) {
-  var arr = []
+function getWorkers() {
+  let arr = []
 
-  for(var id in cluster.workers) {
-    var worker = cluster.workers[id]
-    if(worker._type === type) arr.push(worker)
+  for(let id in cluster.workers) {
+    let worker = cluster.workers[id]
+    arr.push(worker)
   }
 
   return arr
